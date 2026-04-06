@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '6ag@o==h8q1*=4qz4u0)_9qoll^6a9e(@g#j@$25^#c)s&cl*h'
 # SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me')
 DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS ="127.0.0.1","localhost","metle-shop.vercel.app"
+ALLOWED_HOSTS ="127.0.0.1","localhost","metle-shop-mrt9ts4j2-metles-projects.vercel.app"
 # ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
 
 INSTALLED_APPS = [
