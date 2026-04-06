@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "WISHLIST_TITLE" %} - Utsukushi{% endblock %}
+
+{% block body_class %}store-bg{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <div>
+      <span class="tag">{% trans "WISHLIST_TITLE" %}</span>
+      <h2>{% trans "WISHLIST_TITLE" %}</h2>
+      <p class="muted">{% trans "WISHLIST_SUBTITLE" %}</p>
+    </div>
+  </section>
+
+  <div id="wishlist-wrapper" data-empty-label="{% trans "WISHLIST_EMPTY" %}">
+    {% if wishlist_products %}
+      <section class="grid" id="wishlist-section">
+        {% for product in wishlist_products %}
+          <article class="card product-card" data-wishlist-card="true">
+            <div class="product-image">
+              {% if product.image_src %}
+                <img src="{{ product.image_src }}" alt="{{ product.name }}">
+              {% else %}
+                <div class="product-placeholder">Utsukushi</div>
+              {% endif %}
+            </div>
+            <div class="product-body">
+              <h4>{{ product.name }}</h4>
+              {% if product.category %}
+                <div class="pill">{{ product.category.name }}</div>
+              {% endif %}
+              {% if product.brand %}
+                <div class="pill">{{ product.brand.name }}</div>
+              {% endif %}
+            </div>
+            <div class="product-actions">
+              <p class="product-price">
+                {% if product.discount %}
+                  <span class="price-original">{{ product.display_symbol }}{{ product.display_price }}</span>
+                  <span class="price-discount">{{ product.display_symbol }}{{ product.display_discounted_price }}</span>
+                  <span class="discount-badge">-{{ product.discount }}%</span>
+                {% else %}
+                  <strong>{{ product.display_symbol }}{{ product.display_price }}</strong>
+                {% endif %}
+              </p>
+              <a class="button" href="/products/{{ product.id }}/?back={{ request.get_full_path|urlencode }}">{% trans "PRODUCTS_CARD_VIEW" %}</a>
+              <div class="product-action-row">
+                {% if product.in_stock %}
+                  <button class="button secondary cart-toggle" type="button" data-product-id="{{ product.id }}">{% trans "PRODUCTS_CARD_ADD" %}</button>
+                {% endif %}
+                {% if not product.in_stock %}
+                  <button class="button secondary wishlist-button{% if product.id in wishlist_ids %} is-wishlisted{% endif %}" type="button" data-product-id="{{ product.id }}" aria-label="{% trans "PRODUCTS_CARD_WISHLIST" %}">
+                    <svg class="wishlist-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M12 21s-7.5-4.5-9.5-8.5C1 9 2.5 6 6 6c2 0 3.5 1.2 4.5 2.7C11.5 7.2 13 6 15 6c3.5 0 5 3 3.5 6.5C19.5 16.5 12 21 12 21z"/>
+                    </svg>
+                    {% trans "PRODUCTS_CARD_WISHLIST" %}
+                  </button>
+                {% endif %}
+              </div>
+              {% if product.in_stock %}
+                <div class="cart-popover" data-product-id="{{ product.id }}">
+                  <form method="post" action="/cart/add/{{ product.id }}/" class="add-to-cart-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <label>
+                      {% trans "PRODUCTS_QTY" %}
+                      <input type="number" name="quantity" min="1" value="1">
+                    </label>
+                    <button class="button" type="submit">{% trans "PRODUCTS_ADD_SUBMIT" %}</button>
+                  </form>
+                </div>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </section>
+    {% else %}
+      <article class="card">{% trans "WISHLIST_EMPTY" %}</article>
+    {% endif %}
+  </div>
+{% endblock %}

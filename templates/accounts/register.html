@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Register - Utsukushi{% endblock %}
+
+{% block content %}
+  <section class="card register-card">
+    <h2>{% trans "REGISTER_TITLE" %}</h2>
+    <p class="muted">{% trans "REGISTER_SUBTITLE" %}</p>
+    <form method="post" id="customer-form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="button" type="submit">{% trans "REGISTER_CTA" %}</button>
+    </form>
+  </section>
+  <script>
+    const form = document.querySelector('#customer-form');
+    const fields = {
+      full_name: document.querySelector('#id_full_name'),
+      email: document.querySelector('#id_email'),
+      mobile_number: document.querySelector('#id_mobile_number'),
+    };
+
+    const loadCustomer = () => {
+      try {
+        const raw = localStorage.getItem('utsukushi-customer');
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (data.full_name && fields.full_name) fields.full_name.value = data.full_name;
+        if (data.email && fields.email) fields.email.value = data.email;
+        if (data.mobile_number && fields.mobile_number) fields.mobile_number.value = data.mobile_number;
+      } catch (error) {
+        // Ignore invalid local data.
+      }
+    };
+
+    const saveCustomer = () => {
+      if (!form) return;
+      const language = localStorage.getItem('utsukushi-language') || '';
+      const currency = localStorage.getItem('utsukushi-currency') || '';
+      const languageField = document.querySelector('#id_language');
+      const currencyField = document.querySelector('#id_currency');
+      if (languageField) languageField.value = language;
+      if (currencyField) currencyField.value = currency;
+      const payload = {
+        full_name: fields.full_name ? fields.full_name.value.trim() : '',
+        email: fields.email ? fields.email.value.trim() : '',
+        mobile_number: fields.mobile_number ? fields.mobile_number.value.trim() : '',
+        language,
+        currency,
+      };
+      localStorage.setItem('utsukushi-customer', JSON.stringify(payload));
+    };
+
+    loadCustomer();
+    if (form) {
+      form.addEventListener('submit', saveCustomer);
+    }
+  </script>
+{% endblock %}

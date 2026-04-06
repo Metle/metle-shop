@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "ORDER_TITLE" %} #{{ order.order_number|default:order.id }} - Utsukushi{% endblock %}
+
+{% block body_class %}order-bg{% endblock %}
+
+{% block content %}
+  <section class="card">
+    <h2>{% trans "ORDER_TITLE" %} #{{ order.order_number|default:order.id }}</h2>
+    <p class="muted">{% trans "ORDER_PLACED" %} {{ order.created_at|date:"M d, Y" }} · {% trans "ORDER_STATUS" %}: {{ order.status }}</p>
+    <p>{% trans "ORDER_CUSTOMER" %}: {{ order.full_name }} ({{ order.email }})</p>
+    <form method="post" class="order-options-form" id="order-options-form">
+      {% csrf_token %}
+      <label>
+        {% trans "ORDER_DELIVERY_OPTION" %}
+        <select id="delivery-option" name="delivery_option" disabled>
+          <option value="pick-up" {% if order.delivery_option == "pick-up" %}selected{% endif %}>{% trans "ORDER_DELIVERY_PICKUP" %}</option>
+          <option value="delivery" {% if order.delivery_option == "delivery" %}selected{% endif %}>{% trans "ORDER_DELIVERY_DELIVERY" %}</option>
+        </select>
+      </label>
+      <label id="delivery-address-wrap" class="delivery-address-wrap">
+        {% trans "ORDER_ADDRESS" %}
+        <input type="text" id="delivery-address" name="delivery_address" placeholder="{% trans "ORDER_ADDRESS_PLACEHOLDER" %}" value="{{ order.delivery_address }}" disabled>
+      </label>
+      <label class="order-payment-wrap">
+        {% trans "ORDER_PAYMENT_OPTION" %}
+        <select name="payment_option" id="payment-option" disabled>
+          <option value="cash" {% if order.payment_option == "cash" %}selected{% endif %}>{% trans "ORDER_PAYMENT_CASH" %}</option>
+          <option value="bank transfer" {% if order.payment_option == "bank transfer" %}selected{% endif %}>{% trans "ORDER_PAYMENT_BANK" %}</option>
+        </select>
+      </label>
+      <button class="button secondary order-edit-button" type="submit" id="order-edit-button" data-edit-label="{% trans "ORDER_EDIT" %}" data-save-label="{% trans "ORDER_SAVE" %}">{% trans "ORDER_EDIT" %}</button>
+    </form>
+  </section>
+
+  <section class="card section-spacing-top">
+    <h3>{% trans "ORDER_ITEMS" %}</h3>
+    <ul>
+      {% for item in items %}
+        <li>{{ item.product.name }} x {{ item.quantity }} — {{ currency_symbol }}{{ item.line_total|floatformat:2 }}</li>
+      {% endfor %}
+    </ul>
+    {% if order.discount %}
+      <p class="muted">{% trans "ORDER_DISCOUNT" %}: {{ order.discount }}%</p>
+    {% endif %}
+    <p><strong>{% trans "ORDER_TOTAL" %}: {{ currency_symbol }}{{ total }}</strong></p>
+  </section>
+  <script>
+    const deliverySelect = document.querySelector('#delivery-option');
+    const addressWrap = document.querySelector('#delivery-address-wrap');
+    const optionsForm = document.querySelector('#order-options-form');
+    const editButton = document.querySelector('#order-edit-button');
+    const paymentSelect = document.querySelector('#payment-option');
+
+    if (deliverySelect && addressWrap) {
+      addressWrap.style.display = deliverySelect.value === 'delivery' ? 'block' : 'none';
+      deliverySelect.addEventListener('change', () => {
+        addressWrap.style.display = deliverySelect.value === 'delivery' ? 'block' : 'none';
+      });
+    }
+
+    if (optionsForm && editButton) {
+      editButton.addEventListener('click', (event) => {
+        const editLabel = editButton.getAttribute('data-edit-label') || 'Edit';
+        const saveLabel = editButton.getAttribute('data-save-label') || 'Save';
+        if (editButton.textContent.trim() === editLabel) {
+          event.preventDefault();
+          editButton.textContent = saveLabel;
+          if (deliverySelect) deliverySelect.disabled = false;
+          if (paymentSelect) paymentSelect.disabled = false;
+          const addressInput = document.querySelector('#delivery-address');
+          if (addressInput) addressInput.disabled = false;
+        }
+      });
+    }
+  </script>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Order Confirmed - Utsukushi{% endblock %}
+
+{% block body_class %}checkout-bg{% endblock %}
+
+{% block content %}
+  <section class="card order-success-card">
+    <h2>{% trans "ORDER_SUCCESS_TITLE" %}</h2>
+    <p class="muted">{% trans "ORDER_SUCCESS_MESSAGE" %} {{ order.id }}.</p>
+    <p>{% trans "ORDER_SUCCESS_STATUS" %}: {{ order.status }}</p>
+    <a class="button secondary" href="/checkout/order/{{ order.id }}/">{% trans "ORDER_SUCCESS_VIEW" %}</a>
+    <a class="button" href="/">{% trans "ORDER_SUCCESS_RETURN" %}</a>
+  </section>
+{% endblock %}

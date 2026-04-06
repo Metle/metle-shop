@@ -1,0 +1,302 @@
+# English translations for Utsukushi.
+msgid ""
+msgstr ""
+"Project-Id-Version: utsukushi\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-27 00:00+0000\n"
+"PO-Revision-Date: 2026-02-27 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "BRAND_TAGLINE"
+msgstr "Skin-care ritual essentials"
+
+msgid "NAV_PRODUCTS"
+msgstr "Products"
+
+msgid "NAV_WISHLIST"
+msgstr "Wishlist"
+
+msgid "NAV_CART"
+msgstr "Cart"
+
+msgid "NAV_CHECKOUT"
+msgstr "Checkout"
+
+msgid "NAV_SEARCH"
+msgstr "Search"
+
+msgid "NAV_SEARCH_PLACEHOLDER"
+msgstr "Search products"
+
+msgid "NAV_REGISTER"
+msgstr "Register"
+
+msgid "NAV_LOG_OUT"
+msgstr "Log out"
+
+msgid "NAV_LANGUAGE"
+msgstr "Language"
+
+msgid "LANG_ENGLISH"
+msgstr "English"
+
+msgid "LANG_DUTCH"
+msgstr "Dutch"
+
+msgid "NAV_CURRENCY"
+msgstr "Currency"
+
+msgid "CURRENCY_USD"
+msgstr "USD"
+
+msgid "CURRENCY_SRD"
+msgstr "SRD"
+
+msgid "CURRENCY_EUR"
+msgstr "EUR"
+
+msgid "NAV_BRANDS"
+msgstr "Brands"
+
+msgid "NAV_NO_BRANDS"
+msgstr "No brands yet."
+
+msgid "TOAST_LOGGED_OUT"
+msgstr "You have been logged out."
+
+msgid "PRODUCTS_TAGLINE"
+msgstr "Daily glow ritual"
+
+msgid "PRODUCTS_TITLE"
+msgstr "Skin-care crafted for calm, luminous days."
+
+msgid "PRODUCT_DESCRIPTION"
+msgstr "Description"
+
+msgid "PRODUCTS_SUBTITLE"
+msgstr "Clean formulas and intentional textures designed to soften your mornings and restore your nights."
+
+msgid "PRODUCTS_CTA_CHECKOUT"
+msgstr "Go to Checkout"
+
+msgid "PRODUCTS_CTA_REGISTER"
+msgstr "Create Account"
+
+msgid "PRODUCTS_FILTER_TITLE"
+msgstr "Filter by category"
+
+msgid "PRODUCTS_FILTER_SUBTITLE"
+msgstr "Choose a ritual focus."
+
+msgid "PRODUCTS_FILTER_ALL"
+msgstr "All"
+
+msgid "PRODUCTS_FILTER_SALE"
+msgstr "On sale"
+
+msgid "PRODUCTS_FILTER_CLEAR"
+msgstr "Clear filters"
+
+msgid "PRODUCTS_SALE_EMPTY"
+msgstr "Nothing currently on sale"
+
+msgid "PRODUCTS_FEATURED_TITLE"
+msgstr "Featured products"
+
+msgid "PRODUCTS_FILTERED_BADGE"
+msgstr "Filtered"
+
+msgid "PRODUCTS_PREVIOUS_TITLE"
+msgstr "Previously purchased"
+
+msgid "WISHLIST_TITLE"
+msgstr "Wishlist"
+
+msgid "WISHLIST_SUBTITLE"
+msgstr "Saved items waiting for a restock."
+
+msgid "WISHLIST_EMPTY"
+msgstr "No wishlist items yet."
+
+msgid "PRODUCTS_PREVIOUS_EMPTY"
+msgstr "No previous purchases yet."
+
+msgid "PRODUCTS_CARD_VIEW"
+msgstr "More info..."
+
+msgid "PRODUCTS_CARD_ADD"
+msgstr "Add to cart"
+
+msgid "PRODUCTS_CARD_WISHLIST"
+msgstr "Wishlist"
+
+msgid "PRODUCTS_QTY"
+msgstr "Quantity"
+
+msgid "PRODUCTS_ADD_SUBMIT"
+msgstr "Add"
+
+msgid "PRODUCTS_EMPTY"
+msgstr "No products yet."
+
+msgid "PAGINATION_PREV"
+msgstr "Previous"
+
+msgid "PAGINATION_NEXT"
+msgstr "Next"
+
+msgid "PAGINATION_PAGE"
+msgstr "Page"
+
+msgid "PRODUCT_DETAIL_AVAILABLE"
+msgstr "Available"
+
+msgid "PRODUCT_DETAIL_QTY"
+msgstr "Quantity"
+
+msgid "PRODUCT_DETAIL_ADD"
+msgstr "Add to Cart"
+
+msgid "PRODUCT_DETAIL_WISHLIST"
+msgstr "Wishlist"
+
+msgid "PRODUCT_DETAIL_BACK"
+msgstr "Back"
+
+msgid "PRODUCT_DETAIL_CATEGORY"
+msgstr "Category"
+
+msgid "PRODUCT_DETAIL_BRAND"
+msgstr "Brand"
+
+msgid "CART_TITLE"
+msgstr "Your Cart"
+
+msgid "CART_CONTINUE"
+msgstr "Continue Shopping"
+
+msgid "CART_REMOVE_ITEM"
+msgstr "Remove item"
+
+msgid "CART_QTY"
+msgstr "Quantity"
+
+msgid "CART_UNIT_PRICE"
+msgstr "Price per item"
+
+msgid "CART_UNIT_DISCOUNT"
+msgstr "Discount"
+
+msgid "CART_EMPTY"
+msgstr "Your cart is empty."
+
+msgid "CART_TOTAL"
+msgstr "Total"
+
+msgid "CART_CHECKOUT"
+msgstr "Proceed to Checkout"
+
+msgid "CART_PREVIOUS_ORDERS"
+msgstr "Previous Orders"
+
+msgid "CART_ORDER"
+msgstr "Order"
+
+msgid "CART_NO_PREVIOUS"
+msgstr "No previous orders yet."
+
+msgid "REGISTER_TITLE"
+msgstr "Register"
+
+msgid "REGISTER_SUBTITLE"
+msgstr "Save your ritual preferences and breeze through checkout."
+
+msgid "REGISTER_CTA"
+msgstr "Create Account"
+
+msgid "CHECKOUT_TITLE"
+msgstr "Checkout"
+
+msgid "CHECKOUT_SUBTITLE"
+msgstr "Complete your ritual. We'll only ask for the essentials."
+
+msgid "CHECKOUT_CTA"
+msgstr "Place Order"
+
+msgid "CHECKOUT_STOCK_ISSUE"
+msgstr "Some items are low on stock"
+
+msgid "CHECKOUT_ITEMS_TITLE"
+msgstr "Your items"
+
+msgid "ORDER_SUCCESS_TITLE"
+msgstr "Order confirmed"
+
+msgid "ORDER_SUCCESS_MESSAGE"
+msgstr "Thank you for choosing Utsukushi. Your order number is"
+
+msgid "ORDER_SUCCESS_STATUS"
+msgstr "Status"
+
+msgid "ORDER_SUCCESS_VIEW"
+msgstr "View Order"
+
+msgid "ORDER_SUCCESS_RETURN"
+msgstr "Return to shop"
+
+msgid "ORDER_TITLE"
+msgstr "Order"
+
+msgid "ORDER_PLACED"
+msgstr "Placed"
+
+msgid "ORDER_STATUS"
+msgstr "Status"
+
+msgid "ORDER_CUSTOMER"
+msgstr "Customer"
+
+msgid "ORDER_DELIVERY_OPTION"
+msgstr "Delivery option"
+
+msgid "ORDER_DELIVERY_PICKUP"
+msgstr "Pick-up"
+
+msgid "ORDER_DELIVERY_DELIVERY"
+msgstr "Delivery"
+
+msgid "ORDER_ADDRESS"
+msgstr "Address"
+
+msgid "ORDER_ADDRESS_PLACEHOLDER"
+msgstr "Street, City, Postal code"
+
+msgid "ORDER_PAYMENT_OPTION"
+msgstr "Payment option"
+
+msgid "ORDER_PAYMENT_CASH"
+msgstr "Cash"
+
+msgid "ORDER_PAYMENT_BANK"
+msgstr "Bank transfer"
+
+msgid "ORDER_EDIT"
+msgstr "Edit"
+
+msgid "ORDER_SAVE"
+msgstr "Save"
+
+msgid "ORDER_ITEMS"
+msgstr "Items"
+
+msgid "ORDER_TOTAL"
+msgstr "Total"
+
+msgid "ORDER_DISCOUNT"
+msgstr "Order discount"

@@ -1,0 +1,107 @@
+.lang-form-hidden {
+  display: none;
+}
+
+.order-success-card {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.product-detail-image {
+  width: 100%;
+  max-height: 520px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #f6f7f9;
+}
+
+.product-gallery {
+  margin-top: 14px;
+}
+
+.product-gallery-thumbnails {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.product-gallery-thumb {
+  border: 1px solid #e2c6b8;
+  border-radius: 10px;
+  padding: 0;
+  background: #fff;
+  width: 72px;
+  height: 72px;
+  overflow: hidden;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+.product-gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.product-gallery-thumb.is-active {
+  border-color: #4c825f;
+  box-shadow: 0 0 0 2px rgba(76, 130, 95, 0.2);
+}
+
+.product-description-text {
+  white-space: pre-wrap;
+}
+
+.order-options-form {
+  max-width: 320px;
+  margin-top: 12px;
+}
+
+.delivery-address-wrap {
+  display: none;
+  margin-top: 10px;
+}
+
+.order-payment-wrap {
+  margin-top: 10px;
+}
+
+.order-edit-button {
+  margin-top: 10px;
+}
+
+.section-spacing-top {
+  margin-top: 18px;
+}
+
+.register-card {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.cart-item-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+}
+
+.cart-item-title {
+  margin: 0;
+}
+
+.button-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sale-pill-active {
+  font-weight: 700;
+}
+
+.tab-panel-hidden {
+  display: none;
+}

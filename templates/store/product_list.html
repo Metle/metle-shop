@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Utsukushi - Products{% endblock %}
+
+{% block body_class %}store-bg{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <div>
+      <span class="tag">{% trans "PRODUCTS_TAGLINE" %}</span>
+      <h2>{% trans "PRODUCTS_TITLE" %}</h2>
+      <p class="muted">{% trans "PRODUCTS_SUBTITLE" %}</p>
+      {% if cart_has_items %}
+        <a class="button" href="/checkout/">{% trans "PRODUCTS_CTA_CHECKOUT" %}</a>
+      {% endif %}
+      <a class="button secondary" href="/accounts/register/" id="hero-register">{% trans "PRODUCTS_CTA_REGISTER" %}</a>
+    </div>
+    <div class="card">
+      <h3>{% trans "PRODUCTS_FILTER_TITLE" %}</h3>
+      <p class="muted">{% trans "PRODUCTS_FILTER_SUBTITLE" %}</p>
+      <div>
+        <a class="pill sale-pill{% if active_sale %} sale-pill-active{% endif %}" href="/?sale=1">{% trans "PRODUCTS_FILTER_SALE" %}</a>
+        {% for category in categories %}
+          <a class="pill" href="/?category={{ category.slug }}">{{ category.name }}</a>
+        {% endfor %}
+        {% if active_category %}
+          <a class="pill clear-pill" href="/">{% trans "PRODUCTS_FILTER_CLEAR" %}</a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <div class="section-title">
+    <div class="tab-row">
+      <button class="tab-button active" data-tab="featured">{% trans "PRODUCTS_FEATURED_TITLE" %}</button>
+      <button class="tab-button" data-tab="previous">{% trans "PRODUCTS_PREVIOUS_TITLE" %}</button>
+    </div>
+    {% if active_category %}
+      <span class="pill">{% trans "PRODUCTS_FILTERED_BADGE" %}</span>
+    {% endif %}
+  </div>
+
+  <section class="grid tab-panel" data-tab="featured">
+    {% for product in products %}
+      <article class="card product-card">
+        <div class="product-image">
+          {% if product.image_src %}
+            <img src="{{ product.image_src }}" alt="{{ product.name }}">
+          {% else %}
+            <div class="product-placeholder">Utsukushi</div>
+          {% endif %}
+        </div>
+        <div class="product-body">
+          <h4>{{ product.name }}</h4>
+          {% if product.category %}
+            <div class="pill">{{ product.category.name }}</div>
+          {% endif %}
+          {% if product.brand %}
+            <div class="pill">{{ product.brand.name }}</div>
+          {% endif %}
+        </div>
+        <div class="product-actions">
+          <p class="product-price">
+            {% if product.discount %}
+              <span class="price-original">{{ product.display_symbol }}{{ product.display_price }}</span>
+              <span class="price-discount">{{ product.display_symbol }}{{ product.display_discounted_price }}</span>
+              <span class="discount-badge">-{{ product.discount }}%</span>
+            {% else %}
+              <strong>{{ product.display_symbol }}{{ product.display_price }}</strong>
+            {% endif %}
+          </p>
+          <a class="button" href="/products/{{ product.id }}/?back={{ request.get_full_path|urlencode }}">{% trans "PRODUCTS_CARD_VIEW" %}</a>
+          <div class="product-action-row">
+            {% if product.in_stock %}
+              <button class="button secondary cart-toggle" type="button" data-product-id="{{ product.id }}">{% trans "PRODUCTS_CARD_ADD" %}</button>
+            {% endif %}
+            {% if not product.in_stock %}
+              <button class="button secondary wishlist-button{% if product.id in wishlist_ids %} is-wishlisted{% endif %}" type="button" data-product-id="{{ product.id }}" aria-label="{% trans "PRODUCTS_CARD_WISHLIST" %}">
+                <svg class="wishlist-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 21s-7.5-4.5-9.5-8.5C1 9 2.5 6 6 6c2 0 3.5 1.2 4.5 2.7C11.5 7.2 13 6 15 6c3.5 0 5 3 3.5 6.5C19.5 16.5 12 21 12 21z"/>
+                </svg>
+                {% trans "PRODUCTS_CARD_WISHLIST" %}
+              </button>
+            {% endif %}
+          </div>
+          {% if product.in_stock %}
+            <div class="cart-popover" data-product-id="{{ product.id }}">
+              <form method="post" action="/cart/add/{{ product.id }}/" class="add-to-cart-form">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <label>
+                  {% trans "PRODUCTS_QTY" %}
+                  <input type="number" name="quantity" min="1" value="1">
+                </label>
+                <button class="button" type="submit">{% trans "PRODUCTS_ADD_SUBMIT" %}</button>
+              </form>
+            </div>
+          {% endif %}
+        </div>
+      </article>
+    {% empty %}
+      <article class="card">
+        {% if active_sale %}
+          {% trans "PRODUCTS_SALE_EMPTY" %}
+        {% else %}
+          {% trans "PRODUCTS_EMPTY" %}
+        {% endif %}
+      </article>
+    {% endfor %}
+  </section>
+
+  <section class="grid tab-panel tab-panel-hidden" data-tab="previous">
+    {% for product in previous_products %}
+      <article class="card product-card">
+        <div class="product-image">
+          {% if product.image_src %}
+            <img src="{{ product.image_src }}" alt="{{ product.name }}">
+          {% else %}
+            <div class="product-placeholder">Utsukushi</div>
+          {% endif %}
+        </div>
+        <div class="product-body">
+          <h4>{{ product.name }}</h4>
+          {% if product.category %}
+            <div class="pill">{{ product.category.name }}</div>
+          {% endif %}
+          {% if product.brand %}
+            <div class="pill">{{ product.brand.name }}</div>
+          {% endif %}
+        </div>
+        <div class="product-actions">
+          <p class="product-price"><strong>{{ product.display_symbol }}{{ product.display_price }}</strong></p>
+          <a class="button" href="/products/{{ product.id }}/?back={{ request.get_full_path|urlencode }}">{% trans "PRODUCTS_CARD_VIEW" %}</a>
+          <div class="product-action-row">
+            {% if product.in_stock %}
+              <button class="button secondary cart-toggle" type="button" data-product-id="{{ product.id }}">{% trans "PRODUCTS_CARD_ADD" %}</button>
+            {% endif %}
+            {% if not product.in_stock %}
+              <button class="button secondary wishlist-button{% if product.id in wishlist_ids %} is-wishlisted{% endif %}" type="button" data-product-id="{{ product.id }}" aria-label="{% trans "PRODUCTS_CARD_WISHLIST" %}">
+                <svg class="wishlist-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 21s-7.5-4.5-9.5-8.5C1 9 2.5 6 6 6c2 0 3.5 1.2 4.5 2.7C11.5 7.2 13 6 15 6c3.5 0 5 3 3.5 6.5C19.5 16.5 12 21 12 21z"/>
+                </svg>
+                {% trans "PRODUCTS_CARD_WISHLIST" %}
+              </button>
+            {% endif %}
+          </div>
+          {% if product.in_stock %}
+            <div class="cart-popover" data-product-id="{{ product.id }}">
+              <form method="post" action="/cart/add/{{ product.id }}/" class="add-to-cart-form">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <label>
+                  {% trans "PRODUCTS_QTY" %}
+                  <input type="number" name="quantity" min="1" value="1">
+                </label>
+                <button class="button" type="submit">{% trans "PRODUCTS_ADD_SUBMIT" %}</button>
+              </form>
+            </div>
+          {% endif %}
+        </div>
+      </article>
+    {% empty %}
+      <article class="card">{% trans "PRODUCTS_PREVIOUS_EMPTY" %}</article>
+    {% endfor %}
+  </section>
+
+  {% if page_obj.has_other_pages %}
+    <div class="section-title section-spacing-top">
+      <div>
+        {% if page_obj.has_previous %}
+          <a class="button secondary" href="?page={{ page_obj.previous_page_number }}{% if active_category %}&category={{ active_category }}{% endif %}{% if active_brand %}&brand={{ active_brand }}{% endif %}{% if active_sale %}&sale=1{% endif %}">{% trans "PAGINATION_PREV" %}</a>
+        {% endif %}
+      </div>
+      <span class="pill">{% trans "PAGINATION_PAGE" %} {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+      <div>
+        {% if page_obj.has_next %}
+          <a class="button secondary" href="?page={{ page_obj.next_page_number }}{% if active_category %}&category={{ active_category }}{% endif %}{% if active_brand %}&brand={{ active_brand }}{% endif %}{% if active_sale %}&sale=1{% endif %}">{% trans "PAGINATION_NEXT" %}</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

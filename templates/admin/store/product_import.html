@@ -1,0 +1,12 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  <p>Upload a CSV file with headers that match the product fields.</p>
+  <p>Tip: If descriptions contain commas, save the file with a semicolon delimiter and select it below.</p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="default">Import</button>
+  </form>
+{% endblock %}

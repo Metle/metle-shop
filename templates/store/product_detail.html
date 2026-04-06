@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ product.name }} - Utsukushi{% endblock %}
+
+{% block body_class %}store-bg{% endblock %}
+
+{% block content %}
+  <section class="hero product-detail-hero">
+    <div class="card">
+      <h2>{{ product.name }}</h2>
+      <div class="product-badges">
+        {% if product.category %}
+          <div class="pill">{% trans "PRODUCT_DETAIL_CATEGORY" %}: {{ product.category.name|title }}</div>
+        {% endif %}
+      {% if product.brand %}
+          <div class="pill">{% trans "PRODUCT_DETAIL_BRAND" %}: {{ product.brand.name|title }}</div>
+        {% endif %}
+      </div>
+      <div class="product-gallery" data-product-gallery>
+        <img
+          src="{{ product_images.0 }}"
+          alt="{{ product.name }}"
+          class="product-detail-image"
+          data-product-gallery-main
+        >
+        <div class="product-gallery-thumbnails" role="list" aria-label="{{ product.name }} images">
+          {% for image in product_images %}
+            <button
+              type="button"
+              class="product-gallery-thumb{% if forloop.first %} is-active{% endif %}"
+              data-product-gallery-thumb
+              data-image-src="{{ image }}"
+              aria-label="{{ product.name }} image {{ forloop.counter }}"
+            >
+              <img src="{{ image }}" alt="{{ product.name }} image {{ forloop.counter }}">
+            </button>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>{% trans "PRODUCT_DESCRIPTION" %}</h3>
+
+      <p class="muted product-description-text">{{ product.description }}</p>
+      <p>
+        {% if product.discount %}
+          <span class="price-original">{{ product.display_symbol }}{{ product.display_price }}</span>
+          <span class="price-discount">{{ product.display_symbol }}{{ product.display_discounted_price }}</span>
+          <span class="discount-badge">-{{ product.discount }}%</span>
+        {% else %}
+          <strong>{{ product.display_symbol }}{{ product.display_price }}</strong>
+        {% endif %}
+      </p>
+      <p class="muted">{% trans "PRODUCT_DETAIL_AVAILABLE" %}: {{ product.in_stock }}</p>
+      <form method="post" action="/cart/add/{{ product.id }}/" class="add-to-cart-form">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <input type="hidden" name="back" value="{{ request.GET.back }}">
+        <label>
+          {% trans "PRODUCT_DETAIL_QTY" %}
+          <input type="number" name="quantity" min="1" value="1">
+        </label>
+        <div class="product-action-row">
+          <a class="button secondary" href="{{ request.GET.back|default:'/' }}">{% trans "PRODUCT_DETAIL_BACK" %}</a>
+          <button class="button" type="submit">{% trans "PRODUCT_DETAIL_ADD" %}</button>
+          {% if not product.in_stock %}
+            <button class="button secondary wishlist-button{% if is_wishlisted %} is-wishlisted{% endif %}" type="button" data-product-id="{{ product.id }}" aria-label="{% trans "PRODUCT_DETAIL_WISHLIST" %}">
+              <svg class="wishlist-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 21s-7.5-4.5-9.5-8.5C1 9 2.5 6 6 6c2 0 3.5 1.2 4.5 2.7C11.5 7.2 13 6 15 6c3.5 0 5 3 3.5 6.5C19.5 16.5 12 21 12 21z"/>
+              </svg>
+              {% trans "PRODUCT_DETAIL_WISHLIST" %}
+            </button>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </section>
+  <script>
+    (function () {
+      const galleries = document.querySelectorAll('[data-product-gallery]');
+      galleries.forEach((gallery) => {
+        const mainImage = gallery.querySelector('[data-product-gallery-main]');
+        const thumbs = gallery.querySelectorAll('[data-product-gallery-thumb]');
+        if (!mainImage || !thumbs.length) return;
+        thumbs.forEach((thumb) => {
+          thumb.addEventListener('click', () => {
+            const src = thumb.getAttribute('data-image-src');
+            if (!src) return;
+            mainImage.setAttribute('src', src);
+            thumbs.forEach((item) => item.classList.remove('is-active'));
+            thumb.classList.add('is-active');
+          });
+        });
+      });
+    })();
+  </script>
+{% endblock %}

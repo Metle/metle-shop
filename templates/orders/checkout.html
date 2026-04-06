@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Checkout - Utsukushi{% endblock %}
+
+{% block body_class %}checkout-bg{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <div class="card">
+      <h2>{% trans "CHECKOUT_TITLE" %}</h2>
+      <p class="muted">{% trans "CHECKOUT_SUBTITLE" %}</p>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="button" type="submit">{% trans "CHECKOUT_CTA" %}</button>
+      </form>
+      {% if stock_issues %}
+        <p class="muted">{% trans "CHECKOUT_STOCK_ISSUE" %}: {{ stock_issues|join:", " }}</p>
+      {% endif %}
+    </div>
+    <div class="card">
+      <h3>{% trans "CHECKOUT_ITEMS_TITLE" %}</h3>
+      {% for item in items %}
+        <p>{{ item.product.name }} x {{ item.quantity }}</p>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,620 @@
+{% load static i18n %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Utsukushi{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+  <link rel="stylesheet" href="/static/css/template_overrides.css">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <div class="shell">
+    <aside>
+      <a class="brand" href="/">
+        <img class="logo" src="{% static 'img/logo.png' %}" alt="Utsukushi logo">
+      <h1>Utsukushi</h1>
+      <span>{% trans "BRAND_TAGLINE" %}</span>
+      </a>
+      <nav>
+        <a class="nav-link" data-short="Pr" href="/">{% trans "NAV_PRODUCTS" %}</a>
+        <a class="nav-link" data-short="Wi" href="/wishlist/">{% trans "NAV_WISHLIST" %}</a>
+        <a class="nav-link" data-short="Ca" href="/cart/">
+          {% trans "NAV_CART" %}
+          <span class="cart-badge" id="cart-count">0</span>
+        </a>
+        <a class="nav-link" data-short="Ch" href="/checkout/">{% trans "NAV_CHECKOUT" %}</a>
+        <div class="search-wrap">
+          <label for="product-search">{% trans "NAV_SEARCH" %}</label>
+          <input id="product-search" type="search" placeholder="{% trans "NAV_SEARCH_PLACEHOLDER" %}">
+        </div>
+        <div class="nav-separator"></div>
+        <div class="account-wrap">
+          <a class="nav-link" data-short="Ac" href="/accounts/register/" id="account-link" data-register-label="{% trans "NAV_REGISTER" %}">{% trans "NAV_REGISTER" %}</a>
+          <div class="account-popover" id="account-popover">
+            <form method="post" action="/accounts/logout/" id="account-logout-form">
+              {% csrf_token %}
+              <button type="submit" id="account-logout">{% trans "NAV_LOG_OUT" %}</button>
+            </form>
+          </div>
+        </div>
+        <div class="lang-wrap">
+          <button class="lang-button" type="button" id="lang-toggle">
+            <span class="lang-icon en"></span>
+            {% trans "NAV_LANGUAGE" %}
+          </button>
+          <form method="post" action="/i18n/setlang/" id="lang-form" class="lang-form-hidden">
+            {% csrf_token %}
+            <input type="hidden" name="language" id="lang-input" value="en">
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          </form>
+          <div class="lang-popover" id="lang-popover">
+            <div class="lang-option" data-lang="en">
+              <span class="lang-icon en"></span>
+              {% trans "LANG_ENGLISH" %}
+            </div>
+            <div class="lang-option" data-lang="nl">
+              <span class="lang-icon nl"></span>
+              {% trans "LANG_DUTCH" %}
+            </div>
+          </div>
+        </div>
+        <div class="currency-wrap">
+          <button class="currency-button" type="button" id="currency-toggle">
+            <span class="currency-icon usd">$</span>
+            {% trans "NAV_CURRENCY" %}
+          </button>
+          <div class="currency-popover" id="currency-popover">
+            <div class="currency-option" data-currency="USD">
+              <span class="currency-icon usd">$</span>
+              {% trans "CURRENCY_USD" %}
+            </div>
+            <div class="currency-option" data-currency="SRD">
+              <span class="currency-icon srd">S</span>
+              {% trans "CURRENCY_SRD" %}
+            </div>
+            <div class="currency-option" data-currency="EUR">
+              <span class="currency-icon eur">€</span>
+              {% trans "CURRENCY_EUR" %}
+            </div>
+          </div>
+        </div>
+        <div class="nav-separator"></div>
+        <div class="brand-list">
+          <p class="brand-list-title">{% trans "NAV_BRANDS" %}</p>
+          {% for brand in nav_brands %}
+            <a class="brand-item{% if active_brand == brand.id|stringformat:'s' %} active{% endif %}" href="/?brand={{ brand.id }}">
+              {% if brand.logo %}
+                <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" class="brand-logo">
+              {% endif %}
+              <span>{{ brand.name }}</span>
+            </a>
+          {% empty %}
+            <p class="muted">{% trans "NAV_NO_BRANDS" %}</p>
+          {% endfor %}
+        </div>
+      </nav>
+    </aside>
+    <div>
+      <main>
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  <div class="toast" id="logout-toast">{% trans "TOAST_LOGGED_OUT" %}</div>
+  <script>
+    const navLinks = document.querySelectorAll('.nav-link');
+    const cartToggles = document.querySelectorAll('.cart-toggle');
+    const wishlistButtons = document.querySelectorAll('.wishlist-button');
+    const cartPopovers = document.querySelectorAll('.cart-popover');
+    const cartCount = document.querySelector('#cart-count');
+    const searchInput = document.querySelector('#product-search');
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+    const langToggle = document.querySelector('#lang-toggle');
+    const langPopover = document.querySelector('#lang-popover');
+    const langForm = document.querySelector('#lang-form');
+    const langInput = document.querySelector('#lang-input');
+    const currencyToggle = document.querySelector('#currency-toggle');
+    const currencyPopover = document.querySelector('#currency-popover');
+    const accountLink = document.querySelector('#account-link');
+    const accountPopover = document.querySelector('#account-popover');
+    const accountLogoutForm = document.querySelector('#account-logout-form');
+
+    const setActiveLink = () => {
+      const path = window.location.pathname;
+      navLinks.forEach((link) => {
+        const href = link.getAttribute('href');
+        if (href === '/' && path === '/') {
+          link.classList.add('active');
+          return;
+        }
+        if (href !== '/' && path.startsWith(href)) {
+          link.classList.add('active');
+        }
+      });
+    };
+
+    setActiveLink();
+
+    const closePopovers = () => {
+      cartPopovers.forEach((popover) => {
+        popover.style.display = 'none';
+      });
+    };
+
+    cartToggles.forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const id = button.getAttribute('data-product-id');
+        const popover = document.querySelector(`.cart-popover[data-product-id="${id}"]`);
+        if (!popover) return;
+        const isOpen = popover.style.display === 'block';
+        closePopovers();
+        popover.style.display = isOpen ? 'none' : 'block';
+        if (!isOpen) {
+          const qtyInput = popover.querySelector('input[type="number"]');
+          if (qtyInput) {
+            qtyInput.focus();
+            qtyInput.select();
+          }
+        }
+      });
+    });
+
+    cartPopovers.forEach((popover) => {
+      popover.addEventListener('click', (event) => {
+        event.stopPropagation();
+      });
+      const form = popover.querySelector('form');
+      if (form) {
+        form.addEventListener('submit', () => {
+          closePopovers();
+        });
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      const clickedToggle = target.closest('.cart-toggle');
+      const clickedPopover = target.closest('.cart-popover');
+      if (!clickedToggle && !clickedPopover) {
+        closePopovers();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closePopovers();
+      }
+    });
+
+    const updateCartCount = async () => {
+      if (!cartCount) return;
+      try {
+        const response = await fetch('/cart/count/', { headers: { 'Accept': 'application/json' } });
+        if (!response.ok) return;
+        const data = await response.json();
+        cartCount.textContent = Number.isFinite(data.count) ? data.count : 0;
+      } catch (error) {
+        // Ignore network errors for background polling.
+      }
+    };
+
+    updateCartCount();
+
+    if (searchInput) {
+      let searchTimer;
+      searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+          const query = searchInput.value.toLowerCase().trim();
+          const cards = document.querySelectorAll('.product-card');
+          cards.forEach((card) => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = text.includes(query) ? '' : 'none';
+          });
+        }, 1000);
+      });
+    }
+
+    if (tabButtons.length) {
+      tabButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const target = button.getAttribute('data-tab');
+          tabButtons.forEach((btn) => btn.classList.remove('active'));
+          button.classList.add('active');
+          tabPanels.forEach((panel) => {
+            panel.style.display = panel.getAttribute('data-tab') === target ? '' : 'none';
+          });
+        });
+      });
+    }
+
+    const attachCartFormHandlers = () => {
+      const forms = document.querySelectorAll('.add-to-cart-form');
+      forms.forEach((form) => {
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          const formData = new FormData(form);
+          try {
+            await fetch(form.action, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+              },
+              body: formData,
+            });
+            await updateCartCount();
+            const popover = form.closest('.cart-popover');
+            if (popover) popover.style.display = 'none';
+          } catch (error) {
+            form.submit();
+          }
+        });
+      });
+
+      const removeForms = document.querySelectorAll('.cart-remove-form');
+      removeForms.forEach((form) => {
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          const formData = new FormData(form);
+          try {
+            await fetch(form.action, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+              },
+              body: formData,
+            });
+            await updateCartCount();
+            const card = form.closest('.card');
+            if (card) card.remove();
+            const totalEl = document.querySelector('#cart-total');
+            if (totalEl) {
+              let nextTotal = 0;
+              const lineTotals = document.querySelectorAll('.cart-line-total');
+              lineTotals.forEach((el) => {
+                const discountEl = el.querySelector('.price-discount');
+                const strongEl = el.querySelector('strong');
+                const source = discountEl ? discountEl.textContent : (strongEl ? strongEl.textContent : el.textContent);
+                const value = parseFloat(source.replace(/[^0-9.]/g, '')) || 0;
+                nextTotal += value;
+              });
+              totalEl.textContent = nextTotal.toFixed(2);
+            }
+          } catch (error) {
+            form.submit();
+          }
+        });
+      });
+    };
+
+    attachCartFormHandlers();
+
+    const attachWishlistHandlers = () => {
+      const updateWishlistButtons = (productId, isWishlisted) => {
+        const matches = document.querySelectorAll(`.wishlist-button[data-product-id="${productId}"]`);
+        matches.forEach((btn) => {
+          if (isWishlisted) {
+            btn.classList.add('is-wishlisted');
+          } else {
+            btn.classList.remove('is-wishlisted');
+          }
+        });
+      };
+
+      const removeWishlistCards = (productId) => {
+        const cards = document.querySelectorAll(`.product-card[data-wishlist-card="true"] .wishlist-button[data-product-id="${productId}"]`);
+        cards.forEach((button) => {
+          const card = button.closest('.product-card');
+          if (card) card.remove();
+        });
+        const wishlistWrapper = document.querySelector('#wishlist-wrapper');
+        const remaining = document.querySelectorAll('.product-card[data-wishlist-card="true"]');
+        if (wishlistWrapper && remaining.length === 0) {
+          const emptyLabel = wishlistWrapper.getAttribute('data-empty-label');
+          if (emptyLabel) {
+            wishlistWrapper.innerHTML = `<article class="card">${emptyLabel}</article>`;
+          } else {
+            wishlistWrapper.remove();
+          }
+        }
+      };
+
+      wishlistButtons.forEach((button) => {
+        button.addEventListener('click', async () => {
+          const productId = button.getAttribute('data-product-id');
+          if (!productId) return;
+          button.disabled = true;
+          try {
+            const response = await fetch('/accounts/wishlist/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+              },
+              body: JSON.stringify({ product_id: productId }),
+            });
+            if (response.status === 401) {
+              const next = encodeURIComponent(`${window.location.pathname}${window.location.search}`);
+              window.location.href = `/accounts/register/?next=${next}`;
+              return;
+            }
+            if (!response.ok) return;
+            const data = await response.json();
+            if (data.added) {
+              updateWishlistButtons(productId, true);
+            } else if (data.removed) {
+              updateWishlistButtons(productId, false);
+              removeWishlistCards(productId);
+            }
+          } catch (error) {
+            // Ignore network errors for wishlist updates.
+          } finally {
+            button.disabled = false;
+          }
+        });
+      });
+    };
+
+    attachWishlistHandlers();
+
+    const getStoredCustomer = () => {
+      try {
+        const raw = localStorage.getItem('utsukushi-customer');
+        return raw ? JSON.parse(raw) : null;
+      } catch (error) {
+        return null;
+      }
+    };
+
+    const setAccountLabel = (customerName = null) => {
+      if (!accountLink) return;
+      if (customerName) {
+        accountLink.textContent = customerName;
+        accountLink.classList.add('disabled');
+        const heroRegister = document.querySelector('#hero-register');
+        if (heroRegister) {
+          heroRegister.style.display = 'none';
+        }
+      } else {
+        accountLink.textContent = accountLink.getAttribute('data-register-label') || 'Register';
+        accountLink.classList.remove('disabled');
+        const heroRegister = document.querySelector('#hero-register');
+        if (heroRegister) {
+          heroRegister.style.display = '';
+        }
+      }
+    };
+
+    const syncCustomerLocale = () => {
+      const customer = getStoredCustomer() || {};
+      const language = localStorage.getItem('utsukushi-language') || customer.language || '';
+      const currency = localStorage.getItem('utsukushi-currency') || customer.currency || '';
+      const payload = {
+        full_name: customer.full_name || '',
+        email: customer.email || '',
+        mobile_number: customer.mobile_number || '',
+        language,
+        currency,
+      };
+      localStorage.setItem('utsukushi-customer', JSON.stringify(payload));
+      updateCustomerPreferences(language, currency);
+    };
+
+    const updateCustomerPreferences = async (language, currency) => {
+      try {
+        await fetch('/accounts/preferences/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
+          body: JSON.stringify({ language, currency }),
+        });
+      } catch (error) {
+        // Ignore network errors for background update.
+      }
+    };
+
+    const autofillCustomerFields = () => {
+      const customer = getStoredCustomer();
+      if (!customer) return;
+      const nameField = document.querySelector('#id_full_name');
+      const emailField = document.querySelector('#id_email');
+      const mobileField = document.querySelector('#id_mobile_number');
+      const languageField = document.querySelector('#id_language');
+      const currencyField = document.querySelector('#id_currency');
+      if (nameField && customer.full_name) nameField.value = customer.full_name;
+      if (emailField && customer.email) emailField.value = customer.email;
+      if (mobileField && customer.mobile_number) mobileField.value = customer.mobile_number;
+      if (languageField && customer.language) languageField.value = customer.language;
+      if (currencyField && customer.currency) currencyField.value = customer.currency;
+    };
+
+    if (accountLink && accountPopover) {
+      accountLink.addEventListener('click', (event) => {
+        const customer = getStoredCustomer();
+        if (customer && customer.full_name) {
+          event.preventDefault();
+          const isOpen = accountPopover.style.display === 'block';
+          accountPopover.style.display = isOpen ? 'none' : 'block';
+        }
+      });
+    }
+
+    const logoutToast = document.querySelector('#logout-toast');
+
+    if (accountLogoutForm) {
+      accountLogoutForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        localStorage.removeItem('utsukushi-customer');
+        if (accountPopover) accountPopover.style.display = 'none';
+        if (logoutToast) {
+          logoutToast.classList.add('show');
+          setTimeout(() => logoutToast.classList.remove('show'), 1200);
+        }
+        try {
+          await fetch('/accounts/logout/', {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': getCookie('csrftoken'),
+            },
+          });
+        } catch (error) {
+          // Ignore network errors for logout.
+        }
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 300);
+      });
+    }
+
+    document.addEventListener('click', (event) => {
+      const clickedAccount = event.target.closest('.account-wrap');
+      if (!clickedAccount && accountPopover) {
+        accountPopover.style.display = 'none';
+      }
+    });
+
+    const applyStoredLanguageIcon = () => {
+      if (!langToggle) return;
+      const storedLang = localStorage.getItem('utsukushi-language');
+      if (!storedLang) return;
+      const option = langPopover ? langPopover.querySelector(`.lang-option[data-lang="${storedLang}"]`) : null;
+      const icon = option ? option.querySelector('.lang-icon') : null;
+      if (icon) {
+        langToggle.querySelector('.lang-icon').className = icon.className;
+      }
+      if (langInput) {
+        langInput.value = storedLang;
+      }
+    };
+
+    const syncSessionStatus = async () => {
+      try {
+        const response = await fetch('/accounts/session/', { headers: { 'Accept': 'application/json' } });
+        if (!response.ok) return;
+        const data = await response.json();
+        if (data.authenticated) {
+          setAccountLabel(data.full_name);
+        } else {
+          setAccountLabel(null);
+        }
+      } catch (error) {
+        // Ignore session errors.
+      }
+    };
+
+    syncSessionStatus();
+    autofillCustomerFields();
+    applyStoredLanguageIcon();
+
+    if (langToggle && langPopover) {
+      langToggle.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const isOpen = langPopover.style.display === 'block';
+        langPopover.style.display = isOpen ? 'none' : 'block';
+      });
+
+      langPopover.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const option = event.target.closest('.lang-option');
+        if (!option) return;
+        const icon = option.querySelector('.lang-icon');
+        if (icon) {
+          langToggle.querySelector('.lang-icon').className = icon.className;
+        }
+        const lang = option.getAttribute('data-lang');
+        if (lang) {
+          localStorage.setItem('utsukushi-language', lang);
+          if (langInput) {
+            langInput.value = lang;
+          }
+          if (langForm) {
+            langForm.submit();
+            return;
+          }
+          syncCustomerLocale();
+        }
+        langPopover.style.display = 'none';
+      });
+    }
+
+    if (currencyToggle && currencyPopover) {
+      currencyToggle.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const isOpen = currencyPopover.style.display === 'block';
+        currencyPopover.style.display = isOpen ? 'none' : 'block';
+      });
+
+      const applyCurrencyIcon = (currency) => {
+        const option = currencyPopover.querySelector(`.currency-option[data-currency="${currency}"]`);
+        const icon = option ? option.querySelector('.currency-icon') : null;
+        if (icon && currencyToggle.querySelector('.currency-icon')) {
+          currencyToggle.querySelector('.currency-icon').className = icon.className;
+          currencyToggle.querySelector('.currency-icon').textContent = icon.textContent;
+        }
+      };
+
+      currencyPopover.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const option = event.target.closest('.currency-option');
+        if (!option) return;
+        const currency = option.getAttribute('data-currency');
+        localStorage.setItem('utsukushi-currency', currency);
+        syncCustomerLocale();
+        applyCurrencyIcon(currency);
+        setCurrency(currency);
+        currencyPopover.style.display = 'none';
+      });
+
+      const storedCurrency = localStorage.getItem('utsukushi-currency');
+      if (storedCurrency) {
+        applyCurrencyIcon(storedCurrency);
+      }
+    }
+
+    document.addEventListener('click', (event) => {
+      const clickedLang = event.target.closest('.lang-wrap');
+      if (!clickedLang && langPopover) {
+        langPopover.style.display = 'none';
+      }
+      const clickedCurrency = event.target.closest('.currency-wrap');
+      if (!clickedCurrency && currencyPopover) {
+        currencyPopover.style.display = 'none';
+      }
+    });
+
+    const getCookie = (name) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) {
+        return parts.pop().split(';').shift();
+      }
+      return '';
+    };
+
+    const setCurrency = async (currency) => {
+      if (!currency) return;
+      try {
+        await fetch('/currency/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
+          body: JSON.stringify({ currency }),
+        });
+        const cards = document.querySelectorAll('.product-card');
+        if (cards.length) {
+          window.location.reload();
+        }
+      } catch (error) {
+        // Ignore network errors for now.
+      }
+    };
+  </script>
+</body>
+</html>

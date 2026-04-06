@@ -1,0 +1,296 @@
+# Dutch translations for Utsukushi.
+msgid ""
+msgstr ""
+"Project-Id-Version: utsukushi\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-27 00:00+0000\n"
+"PO-Revision-Date: 2026-02-27 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "BRAND_TAGLINE"
+msgstr "Huidverzorgingsrituelen, essentials"
+
+msgid "NAV_PRODUCTS"
+msgstr "Producten"
+
+msgid "NAV_WISHLIST"
+msgstr "Verlanglijst"
+
+msgid "NAV_CART"
+msgstr "Winkelwagen"
+
+msgid "NAV_CHECKOUT"
+msgstr "Afrekenen"
+
+msgid "NAV_SEARCH"
+msgstr "Zoeken"
+
+msgid "NAV_SEARCH_PLACEHOLDER"
+msgstr "Zoek producten"
+
+msgid "NAV_REGISTER"
+msgstr "Registreren"
+
+msgid "NAV_LOG_OUT"
+msgstr "Uitloggen"
+
+msgid "NAV_LANGUAGE"
+msgstr "Taal"
+
+msgid "LANG_ENGLISH"
+msgstr "Engels"
+
+msgid "LANG_DUTCH"
+msgstr "Nederlands"
+
+msgid "NAV_CURRENCY"
+msgstr "Valuta"
+
+msgid "CURRENCY_USD"
+msgstr "USD"
+
+msgid "CURRENCY_SRD"
+msgstr "SRD"
+
+msgid "CURRENCY_EUR"
+msgstr "EUR"
+
+msgid "NAV_BRANDS"
+msgstr "Merken"
+
+msgid "NAV_NO_BRANDS"
+msgstr "Nog geen merken."
+
+msgid "TOAST_LOGGED_OUT"
+msgstr "Je bent uitgelogd."
+
+msgid "WISHLIST_TITLE"
+msgstr "Verlanglijst"
+
+msgid "WISHLIST_SUBTITLE"
+msgstr "Bewaarde items die wachten op aanvulling."
+
+msgid "WISHLIST_EMPTY"
+msgstr "Nog geen items in je verlanglijst."
+
+msgid "PRODUCTS_TAGLINE"
+msgstr "Dagelijkse glow‑ritueel"
+
+msgid "PRODUCTS_TITLE"
+msgstr "Huidverzorging voor kalme, stralende dagen."
+
+msgid "PRODUCT_DESCRIPTION"
+msgstr "Beschrijving"
+
+msgid "PRODUCTS_SUBTITLE"
+msgstr "Schone formules en doordachte texturen die je ochtend verzachten en je nacht herstellen."
+
+msgid "PRODUCTS_CTA_CHECKOUT"
+msgstr "Naar afrekenen"
+
+msgid "PRODUCTS_CTA_REGISTER"
+msgstr "Account aanmaken"
+
+msgid "PRODUCTS_FILTER_TITLE"
+msgstr "Filter op categorie"
+
+msgid "PRODUCTS_FILTER_SUBTITLE"
+msgstr "Kies een focus voor je ritueel."
+
+msgid "PRODUCTS_FILTER_ALL"
+msgstr "Alles"
+
+msgid "PRODUCTS_FILTER_SALE"
+msgstr "In de aanbieding"
+
+msgid "PRODUCTS_FILTER_CLEAR"
+msgstr "Filters wissen"
+
+msgid "PRODUCTS_SALE_EMPTY"
+msgstr "Momenteel niets in de aanbieding"
+
+msgid "PRODUCTS_FEATURED_TITLE"
+msgstr "Uitgelichte producten"
+
+msgid "PRODUCTS_FILTERED_BADGE"
+msgstr "Gefilterd"
+
+msgid "PRODUCTS_PREVIOUS_TITLE"
+msgstr "Eerder gekocht"
+
+msgid "PRODUCTS_PREVIOUS_EMPTY"
+msgstr "Nog geen eerdere aankopen."
+
+msgid "PRODUCTS_CARD_VIEW"
+msgstr "Meer info..."
+
+msgid "PRODUCTS_CARD_ADD"
+msgstr "Toevoegen aan winkelwagen"
+
+msgid "PRODUCTS_QTY"
+msgstr "Aantal"
+
+msgid "PRODUCTS_ADD_SUBMIT"
+msgstr "Toevoegen"
+
+msgid "PRODUCTS_EMPTY"
+msgstr "Nog geen producten."
+
+msgid "PAGINATION_PREV"
+msgstr "Vorige"
+
+msgid "PAGINATION_NEXT"
+msgstr "Volgende"
+
+msgid "PAGINATION_PAGE"
+msgstr "Pagina"
+
+msgid "PRODUCT_DETAIL_AVAILABLE"
+msgstr "Beschikbaar"
+
+msgid "PRODUCT_DETAIL_QTY"
+msgstr "Aantal"
+
+msgid "PRODUCT_DETAIL_ADD"
+msgstr "Toevoegen aan winkelwagen"
+
+msgid "PRODUCT_DETAIL_BACK"
+msgstr "Terug"
+
+msgid "PRODUCT_DETAIL_CATEGORY"
+msgstr "Categorie"
+
+msgid "PRODUCT_DETAIL_BRAND"
+msgstr "Merk"
+
+msgid "CART_TITLE"
+msgstr "Je winkelwagen"
+
+msgid "CART_CONTINUE"
+msgstr "Verder winkelen"
+
+msgid "CART_REMOVE_ITEM"
+msgstr "Item verwijderen"
+
+msgid "CART_QTY"
+msgstr "Aantal"
+
+msgid "CART_UNIT_PRICE"
+msgstr "Prijs per item"
+
+msgid "CART_UNIT_DISCOUNT"
+msgstr "Korting"
+
+msgid "CART_EMPTY"
+msgstr "Je winkelwagen is leeg."
+
+msgid "CART_TOTAL"
+msgstr "Totaal"
+
+msgid "CART_CHECKOUT"
+msgstr "Doorgaan naar afrekenen"
+
+msgid "CART_PREVIOUS_ORDERS"
+msgstr "Eerdere bestellingen"
+
+msgid "CART_ORDER"
+msgstr "Bestelling"
+
+msgid "CART_NO_PREVIOUS"
+msgstr "Nog geen eerdere bestellingen."
+
+msgid "REGISTER_TITLE"
+msgstr "Registreren"
+
+msgid "REGISTER_SUBTITLE"
+msgstr "Bewaar je ritueelvoorkeuren en reken sneller af."
+
+msgid "REGISTER_CTA"
+msgstr "Account aanmaken"
+
+msgid "CHECKOUT_TITLE"
+msgstr "Afrekenen"
+
+msgid "CHECKOUT_SUBTITLE"
+msgstr "Rond je ritueel af. We vragen alleen het noodzakelijke."
+
+msgid "CHECKOUT_CTA"
+msgstr "Bestelling plaatsen"
+
+msgid "CHECKOUT_STOCK_ISSUE"
+msgstr "Sommige items zijn laag op voorraad"
+
+msgid "CHECKOUT_ITEMS_TITLE"
+msgstr "Je items"
+
+msgid "ORDER_SUCCESS_TITLE"
+msgstr "Bestelling bevestigd"
+
+msgid "ORDER_SUCCESS_MESSAGE"
+msgstr "Bedankt dat je voor Utsukushi kiest. Je bestelnummer is"
+
+msgid "ORDER_SUCCESS_STATUS"
+msgstr "Status"
+
+msgid "ORDER_SUCCESS_VIEW"
+msgstr "Bestelling bekijken"
+
+msgid "ORDER_SUCCESS_RETURN"
+msgstr "Terug naar de shop"
+
+msgid "ORDER_TITLE"
+msgstr "Bestelling"
+
+msgid "ORDER_PLACED"
+msgstr "Geplaatst op"
+
+msgid "ORDER_STATUS"
+msgstr "Status"
+
+msgid "ORDER_CUSTOMER"
+msgstr "Klant"
+
+msgid "ORDER_DELIVERY_OPTION"
+msgstr "Bezorgoptie"
+
+msgid "ORDER_DELIVERY_PICKUP"
+msgstr "Afhalen"
+
+msgid "ORDER_DELIVERY_DELIVERY"
+msgstr "Bezorgen"
+
+msgid "ORDER_ADDRESS"
+msgstr "Adres"
+
+msgid "ORDER_ADDRESS_PLACEHOLDER"
+msgstr "Straat, stad, postcode"
+
+msgid "ORDER_PAYMENT_OPTION"
+msgstr "Betaaloptie"
+
+msgid "ORDER_PAYMENT_CASH"
+msgstr "Contant"
+
+msgid "ORDER_PAYMENT_BANK"
+msgstr "Bankoverschrijving"
+
+msgid "ORDER_EDIT"
+msgstr "Bewerken"
+
+msgid "ORDER_SAVE"
+msgstr "Opslaan"
+
+msgid "ORDER_ITEMS"
+msgstr "Items"
+
+msgid "ORDER_TOTAL"
+msgstr "Totaal"
+
+msgid "ORDER_DISCOUNT"
+msgstr "Bestelkorting"

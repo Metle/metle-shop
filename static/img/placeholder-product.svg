@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Product image placeholder</title>
+  <desc id="desc">Placeholder shown when a product has no image.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7efe9"/>
+      <stop offset="100%" stop-color="#ece1d9"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <rect x="230" y="250" width="740" height="700" rx="36" fill="#fff" stroke="#d9c1af" stroke-width="20"/>
+  <circle cx="420" cy="450" r="70" fill="#e9d2c3"/>
+  <path d="M320 810l170-180 120 120 120-150 150 210z" fill="#dcbda8"/>
+  <text x="600" y="1020" text-anchor="middle" fill="#8e7462" font-size="52" font-family="Georgia, serif">No product image</text>
+</svg>
