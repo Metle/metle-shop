@@ -1,4 +1,5 @@
 from pathlib import Path
+from urllib.parse import parse_qsl, unquote, urlparse
 
 from decouple import Csv, config
 
@@ -79,22 +80,40 @@ TEMPLATES = [
 WSGI_APPLICATION = 'utsukushi.wsgi.application'
 ASGI_APPLICATION = 'utsukushi.asgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+
+def database_from_url(url):
+    parsed = urlparse(url)
+    if parsed.scheme not in {'postgres', 'postgresql'}:
+        raise ValueError('DATABASE_URL must use a postgres:// or postgresql:// URL.')
+
+    database = {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': unquote(parsed.path.lstrip('/')),
+        'USER': unquote(parsed.username or ''),
+        'PASSWORD': unquote(parsed.password or ''),
+        'HOST': parsed.hostname or '',
+        'PORT': parsed.port or '',
+        'CONN_MAX_AGE': 600,
     }
-}
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': config('DB_NAME'),
-#         'USER': config('DB_USER'),
-#         'PASSWORD': config('DB_PASSWORD'),
-#         'HOST': config('DB_HOST'),
-#         'PORT': config('DB_PORT'),
-#     }
-# }
+
+    options = dict(parse_qsl(parsed.query))
+    if options:
+        database['OPTIONS'] = options
+
+    return database
+
+
+DATABASE_URL = config('DATABASE_URL', default=config('POSTGRES_URL', default=''))
+
+if DATABASE_URL:
+    DATABASES = {'default': database_from_url(DATABASE_URL)}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
