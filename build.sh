@@ -12,8 +12,7 @@ python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 
 # 2. Run Migrations
-# Use the virtualenv Python so Django and dependencies are available.
-.venv/bin/python manage.py makemigrations --noinput
+# Use committed migrations only; deployment should not generate new migration files.
 .venv/bin/python manage.py migrate --noinput
 
 # 3. Collect Static Files

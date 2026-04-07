@@ -38,6 +38,7 @@ Thumbs.db
 
 # Local environment configuration
 .env
+*.sqlite3.bak.*
 
 # Applications
 *.app
