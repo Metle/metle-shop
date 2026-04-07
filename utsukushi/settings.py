@@ -114,7 +114,7 @@ USE_TZ = True
 
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles_build'
+STATIC_ROOT = BASE_DIR / 'staticfiles_build' / 'static'
 LOCALE_PATHS = [BASE_DIR / 'locale']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
