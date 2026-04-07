@@ -2,6 +2,10 @@
 
 echo "BUILD START"
 
+if [ ! -f .env ] && [ -f .env-dist ]; then
+    cp .env-dist .env
+fi
+
 # 1. Install dependencies (Critical step)
 # Use python3 or python3.9 depending on your Vercel Python runtime
 python3 -m pip install -r requirements.txt

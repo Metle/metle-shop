@@ -50,3 +50,6 @@ Thumbs.db
 *.flv
 *.mov
 *.wmv
+
+# Miscellaneous
+.codex

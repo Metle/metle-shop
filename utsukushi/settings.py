@@ -7,8 +7,30 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '6ag@o==h8q1*=4qz4u0)_9qoll^6a9e(@g#j@$25^#c)s&cl*h'
 # SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me')
 DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS ="127.0.0.1","localhost","metle-shop.vercel.app","metle-shop-35axixjug-metles-projects.vercel.app"
-# ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
+ALLOWED_HOSTS = list(config('ALLOWED_HOSTS', default='', cast=Csv()))
+
+for vercel_host_var in (
+    'VERCEL_URL',
+    'VERCEL_BRANCH_URL',
+    'VERCEL_PROJECT_PRODUCTION_URL',
+):
+    vercel_host = config(vercel_host_var, default='')
+    if vercel_host and vercel_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(vercel_host)
+
+CSRF_TRUSTED_ORIGINS = list(config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='',
+    cast=Csv(),
+))
+
+for host in ALLOWED_HOSTS:
+    if host in {'127.0.0.1', 'localhost'} or host.startswith('.'):
+        continue
+
+    origin = f'https://{host}'
+    if origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(origin)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
