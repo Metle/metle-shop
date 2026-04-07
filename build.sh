@@ -19,7 +19,7 @@ python3 -m venv .venv
 # Ensure your settings.py has STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build')
 .venv/bin/python manage.py collectstatic --noinput --clear
 
-.venv/bin/python manage.py setup --noinput
+.venv/bin/python manage.py setup
 
 
 echo "BUILD END"
