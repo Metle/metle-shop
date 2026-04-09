@@ -80,18 +80,31 @@
           </div>
         </div>
         <div class="nav-separator"></div>
-        <div class="brand-list">
-          <p class="brand-list-title">{% trans "NAV_BRANDS" %}</p>
-          {% for brand in nav_brands %}
-            <a class="brand-item{% if active_brand == brand.id|stringformat:'s' %} active{% endif %}" href="/?brand={{ brand.id }}">
-              {% if brand.logo %}
-                <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" class="brand-logo">
-              {% endif %}
-              <span>{{ brand.name }}</span>
-            </a>
-          {% empty %}
-            <p class="muted">{% trans "NAV_NO_BRANDS" %}</p>
-          {% endfor %}
+        <div class="brand-wrap">
+          <button
+            class="brand-button"
+            type="button"
+            id="brand-button"
+          >
+            <span class="brand-button-label">{% trans "NAV_BRANDS" %}</span>
+            <span class="brand-button-icon" aria-hidden="true"></span>
+          </button>
+          <div class="brand-popover" id="brand-popover">
+            {% for brand in nav_brands %}
+              <a
+                class="brand-item{% if active_brand == brand.id|stringformat:'s' %} active{% endif %}"
+                href="/?brand={{ brand.id }}"
+                data-brand-id="{{ brand.id }}"
+              >
+                {% if brand.logo %}
+                  <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" class="brand-logo">
+                {% endif %}
+                <span>{{ brand.name }}</span>
+              </a>
+            {% empty %}
+              <p class="muted">{% trans "NAV_NO_BRANDS" %}</p>
+            {% endfor %}
+          </div>
         </div>
       </nav>
     </aside>
@@ -117,6 +130,9 @@
     const langInput = document.querySelector('#lang-input');
     const currencyToggle = document.querySelector('#currency-toggle');
     const currencyPopover = document.querySelector('#currency-popover');
+    const brandButton = document.querySelector('#brand-button');
+    const brandPopover = document.querySelector('#brand-popover');
+    const brandLinks = document.querySelectorAll('.brand-item[data-brand-id]');
     const accountLink = document.querySelector('#account-link');
     const accountPopover = document.querySelector('#account-popover');
     const accountLogoutForm = document.querySelector('#account-logout-form');
@@ -576,6 +592,40 @@
       }
     }
 
+    if (brandButton && brandPopover) {
+      brandButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const isOpen = brandPopover.style.display === 'block';
+        brandPopover.style.display = isOpen ? 'none' : 'block';
+      });
+    }
+
+    if (brandLinks.length) {
+      brandLinks.forEach((link) => {
+        link.addEventListener('click', (event) => {
+          const brandId = link.getAttribute('data-brand-id');
+          if (!brandId) return;
+
+          const nextUrl = new URL(window.location.href);
+          const isStorePage = nextUrl.pathname === '/';
+          if (!isStorePage) {
+            nextUrl.pathname = '/';
+            nextUrl.search = '';
+          }
+
+          nextUrl.searchParams.delete('page');
+          if (nextUrl.searchParams.get('brand') === brandId) {
+            nextUrl.searchParams.delete('brand');
+          } else {
+            nextUrl.searchParams.set('brand', brandId);
+          }
+
+          event.preventDefault();
+          window.location.href = nextUrl.pathname + nextUrl.search;
+        });
+      });
+    }
+
     document.addEventListener('click', (event) => {
       const clickedLang = event.target.closest('.lang-wrap');
       if (!clickedLang && langPopover) {
@@ -584,6 +634,10 @@
       const clickedCurrency = event.target.closest('.currency-wrap');
       if (!clickedCurrency && currencyPopover) {
         currencyPopover.style.display = 'none';
+      }
+      const clickedBrand = event.target.closest('.brand-wrap');
+      if (!clickedBrand && brandPopover) {
+        brandPopover.style.display = 'none';
       }
     });
 
