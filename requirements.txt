@@ -4,7 +4,6 @@ attrs==26.1.0
 certifi==2026.2.25
 chardet==4.0.0
 charset-normalizer==3.4.7
-dataclasses==0.6
 deprecation==2.1.0
 Django==5.1.15
 django-storage-supabase==0.1.0
