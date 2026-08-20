@@ -139,4 +139,16 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+SUPABASE_URL = config('SUPABASE_URL', default='')
+SUPABASE_SERVICE_ROLE_KEY = config('SUPABASE_SERVICE_ROLE_KEY', default='')
+SUPABASE_BUCKET = config('SUPABASE_BUCKET', default='media')
+
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+}
+
+if SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY:
+    STORAGES['default'] = {'BACKEND': 'utsukushi.storages.SupabaseStorage'}
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
