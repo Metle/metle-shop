@@ -1,0 +1,18 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  <p>Select many image files at once. Each file is matched to a product by its
+     filename (without the extension).</p>
+  <ul>
+    <li>Filename must equal the product's <strong>SKU</strong> (or product name, if selected below).</li>
+    <li>Add a <code>-1</code>, <code>-2</code> suffix to order multiple images for the same product,
+        e.g. <code>ABC123-1.jpg</code>, <code>ABC123-2.jpg</code>.</li>
+    <li>Files that match no product are reported and skipped.</li>
+  </ul>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="default">Upload</button>
+  </form>
+{% endblock %}

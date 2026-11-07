@@ -71,6 +71,11 @@ class ProductAdmin(admin.ModelAdmin):
         urls = super().get_urls()
         custom_urls = [
             path('import-csv/', self.admin_site.admin_view(self.import_csv), name='store_product_import'),
+            path(
+                'bulk-upload-images/',
+                self.admin_site.admin_view(self.bulk_upload_images),
+                name='store_product_bulk_images',
+            ),
         ]
         return custom_urls + urls
 
@@ -116,6 +121,74 @@ class ProductAdmin(admin.ModelAdmin):
             'form': form,
         }
         return TemplateResponse(request, 'admin/store/product_import.html', context)
+
+    def bulk_upload_images(self, request):
+        if request.method == 'POST':
+            form = ProductImageBulkUploadForm(request.POST, request.FILES)
+            if form.is_valid():
+                uploads = request.FILES.getlist('images')
+                match_by = form.cleaned_data['match_by']
+                replace_existing = form.cleaned_data.get('replace_existing')
+                created, matched_products, unmatched = self._handle_bulk_images(
+                    uploads, match_by, replace_existing,
+                )
+                if created:
+                    messages.success(
+                        request,
+                        f"Uploaded {created} image(s) across {len(matched_products)} product(s).",
+                    )
+                if unmatched:
+                    messages.warning(
+                        request,
+                        f"{len(unmatched)} file(s) did not match any product by "
+                        f"{match_by}: {', '.join(unmatched[:20])}"
+                        + ('…' if len(unmatched) > 20 else ''),
+                    )
+                if not created and not unmatched:
+                    messages.info(request, 'No image files were uploaded.')
+                return redirect('..')
+        else:
+            form = ProductImageBulkUploadForm()
+
+        context = {
+            **self.admin_site.each_context(request),
+            'title': 'Bulk upload product images',
+            'form': form,
+        }
+        return TemplateResponse(request, 'admin/store/product_bulk_upload.html', context)
+
+    def _handle_bulk_images(self, uploads, match_by, replace_existing):
+        created = 0
+        matched_products = set()
+        unmatched = []
+        cleared = set()
+        order_cursor = {}
+
+        for uploaded in uploads:
+            base, explicit_order = _parse_image_filename(uploaded.name)
+            product = _match_product(base, match_by)
+            if product is None:
+                unmatched.append(uploaded.name)
+                continue
+
+            if replace_existing and product.pk not in cleared:
+                product.images.all().delete()
+                cleared.add(product.pk)
+
+            if explicit_order is not None:
+                sort_order = explicit_order
+            else:
+                if product.pk not in order_cursor:
+                    last = product.images.order_by('-sort_order').first()
+                    order_cursor[product.pk] = (last.sort_order + 1) if last else 0
+                sort_order = order_cursor[product.pk]
+                order_cursor[product.pk] = sort_order + 1
+
+            ProductImage.objects.create(product=product, image=uploaded, sort_order=sort_order)
+            created += 1
+            matched_products.add(product.pk)
+
+        return created, matched_products, unmatched
 
     def _handle_csv(self, uploaded_file, delimiter_override=None):
         raw = uploaded_file.read()
@@ -181,6 +254,35 @@ class ProductImportForm(forms.Form):
         choices=[(',', 'Comma (,)'), (';', 'Semicolon (;)'), ('\t', 'Tab')],
         required=False,
     )
+
+
+class ProductImageBulkUploadForm(forms.Form):
+    images = forms.ImageField(
+        required=False,
+        widget=MultipleFileInput(attrs={'multiple': True}),
+        help_text=(
+            'Select multiple image files. Each file is matched to a product by '
+            'its filename (without extension). Add a "-1", "-2" suffix to control '
+            'image order, e.g. "ABC123-1.jpg", "ABC123-2.jpg".'
+        ),
+    )
+    match_by = forms.ChoiceField(
+        choices=[('sku', 'SKU'), ('name', 'Product name')],
+        initial='sku',
+        help_text='Which product field the filename should match.',
+    )
+    replace_existing = forms.BooleanField(
+        required=False,
+        label='Replace existing images',
+        help_text='Delete a product\'s current images before adding the uploaded ones.',
+    )
+
+    def clean(self):
+        cleaned = super().clean()
+        files = self.files.getlist('images') if hasattr(self.files, 'getlist') else []
+        if not files:
+            raise forms.ValidationError('Please select at least one image file.')
+        return cleaned
 
 
 @admin.register(CurrencyRate)
@@ -321,6 +423,40 @@ def _normalize_image_path(value):
     if value.startswith('http://') or value.startswith('https://'):
         return value
     return f"/img/products/{value.lstrip('/')}"
+
+
+_image_order_re = re.compile(r'^(?P<base>.+?)[-_ ](?P<order>\d+)$')
+
+
+def _parse_image_filename(filename: str):
+    """Return (base_name, explicit_order) from an uploaded image filename.
+
+    Strips the extension, then peels off an optional trailing "-1"/"_2"/" 3"
+    suffix used to order multiple images of the same product.
+    """
+    stem = filename.rsplit('/', 1)[-1].rsplit('\\', 1)[-1]
+    if '.' in stem:
+        stem = stem.rsplit('.', 1)[0]
+    stem = stem.strip()
+    match = _image_order_re.match(stem)
+    if match:
+        return match.group('base').strip(), int(match.group('order'))
+    return stem, None
+
+
+def _match_product(base: str, match_by: str):
+    if not base:
+        return None
+    if match_by == 'name':
+        product = Product.objects.filter(name__iexact=base).first()
+        if product:
+            return product
+        target = slugify(base)
+        for candidate in Product.objects.all().only('id', 'name'):
+            if slugify(candidate.name) == target:
+                return candidate
+        return None
+    return Product.objects.filter(sku__iexact=base).first()
 
 
 def _get_or_create_category(value):
