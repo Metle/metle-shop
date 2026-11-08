@@ -242,7 +242,7 @@
       let searchTimer;
       searchInput.addEventListener('input', () => {
         clearTimeout(searchTimer);
-        searchTimer = setTimeout(submitSearch, 500);
+        searchTimer = setTimeout(submitSearch, 1000);
       });
       searchInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
@@ -251,6 +251,12 @@
           submitSearch();
         }
       });
+
+      if (searchInput.value) {
+        searchInput.focus();
+        const end = searchInput.value.length;
+        searchInput.setSelectionRange(end, end);
+      }
     }
 
     if (tabButtons.length) {
