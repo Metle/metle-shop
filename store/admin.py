@@ -39,10 +39,28 @@ class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
 
 
+class MultipleImageField(forms.ImageField):
+    """ImageField that accepts and validates several uploaded files.
+
+    The multiple-file widget returns a list of files, which a plain
+    ImageField rejects with "No file was submitted". This cleans each file
+    in the list individually and always returns a list.
+    """
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('widget', MultipleFileInput(attrs={'multiple': True}))
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_clean = super().clean
+        if not isinstance(data, (list, tuple)):
+            data = [] if data in self.empty_values else [data]
+        return [single_clean(item, initial) for item in data if item not in self.empty_values]
+
+
 class ProductAdminForm(forms.ModelForm):
-    additional_images = forms.ImageField(
+    additional_images = MultipleImageField(
         required=False,
-        widget=MultipleFileInput(attrs={'multiple': True}),
         help_text='Optional: upload one or more additional images.',
     )
 
@@ -257,9 +275,8 @@ class ProductImportForm(forms.Form):
 
 
 class ProductImageBulkUploadForm(forms.Form):
-    images = forms.ImageField(
+    images = MultipleImageField(
         required=False,
-        widget=MultipleFileInput(attrs={'multiple': True}),
         help_text=(
             'Select multiple image files. Each file is matched to a product by '
             'its filename (without extension). Add a "-1", "-2" suffix to control '
