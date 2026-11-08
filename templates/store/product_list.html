@@ -19,13 +19,13 @@
     <div class="card">
       <h3>{% trans "PRODUCTS_FILTER_TITLE" %}</h3>
       <p class="muted">{% trans "PRODUCTS_FILTER_SUBTITLE" %}</p>
-      <div>
-        <a class="pill sale-pill{% if active_sale %} sale-pill-active{% endif %}" href="/?sale=1">{% trans "PRODUCTS_FILTER_SALE" %}</a>
+      <div class="category-filter">
+        <a class="pill filter-pill sale-pill{% if active_sale %} sale-pill-active active{% endif %}" href="/?sale=1">{% trans "PRODUCTS_FILTER_SALE" %}</a>
         {% for category in categories %}
-          <a class="pill" href="/?category={{ category.slug }}">{{ category.name }}</a>
+          <a class="pill filter-pill{% if active_category == category.slug %} active{% endif %}" href="/?category={{ category.slug }}">{{ category.name }}</a>
         {% endfor %}
         {% if active_category %}
-          <a class="pill clear-pill" href="/">{% trans "PRODUCTS_FILTER_CLEAR" %}</a>
+          <a class="pill filter-pill clear-pill" href="/">{% trans "PRODUCTS_FILTER_CLEAR" %}</a>
         {% endif %}
       </div>
     </div>
@@ -53,12 +53,14 @@
         </div>
         <div class="product-body">
           <h4>{{ product.name }}</h4>
-          {% if product.category %}
-            <div class="pill">{{ product.category.name }}</div>
-          {% endif %}
-          {% if product.brand %}
-            <div class="pill">{{ product.brand.name }}</div>
-          {% endif %}
+          <div class="product-tags">
+            {% if product.category %}
+              <span class="pill product-tag">{{ product.category.name }}</span>
+            {% endif %}
+            {% if product.brand %}
+              <span class="pill product-tag">{{ product.brand.name }}</span>
+            {% endif %}
+          </div>
         </div>
         <div class="product-actions">
           <p class="product-price">
@@ -122,12 +124,14 @@
         </div>
         <div class="product-body">
           <h4>{{ product.name }}</h4>
-          {% if product.category %}
-            <div class="pill">{{ product.category.name }}</div>
-          {% endif %}
-          {% if product.brand %}
-            <div class="pill">{{ product.brand.name }}</div>
-          {% endif %}
+          <div class="product-tags">
+            {% if product.category %}
+              <span class="pill product-tag">{{ product.category.name }}</span>
+            {% endif %}
+            {% if product.brand %}
+              <span class="pill product-tag">{{ product.brand.name }}</span>
+            {% endif %}
+          </div>
         </div>
         <div class="product-actions">
           <p class="product-price"><strong>{{ product.display_symbol }}{{ product.display_price }}</strong></p>
