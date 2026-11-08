@@ -136,6 +136,9 @@ msgstr "Add to cart"
 msgid "PRODUCTS_CARD_WISHLIST"
 msgstr "Wishlist"
 
+msgid "PRODUCTS_CARD_OUT_OF_STOCK"
+msgstr "Out of stock"
+
 msgid "PRODUCTS_QTY"
 msgstr "Quantity"
 

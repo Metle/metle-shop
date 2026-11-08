@@ -76,8 +76,8 @@
           <div class="product-action-row">
             {% if product.in_stock %}
               <button class="button secondary cart-toggle" type="button" data-product-id="{{ product.id }}">{% trans "PRODUCTS_CARD_ADD" %}</button>
-            {% endif %}
-            {% if not product.in_stock %}
+            {% else %}
+              <span class="button out-of-stock-button" aria-disabled="true">{% trans "PRODUCTS_CARD_OUT_OF_STOCK" %}</span>
               <button class="button secondary wishlist-button{% if product.id in wishlist_ids %} is-wishlisted{% endif %}" type="button" data-product-id="{{ product.id }}" aria-label="{% trans "PRODUCTS_CARD_WISHLIST" %}">
                 <svg class="wishlist-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                   <path d="M12 21s-7.5-4.5-9.5-8.5C1 9 2.5 6 6 6c2 0 3.5 1.2 4.5 2.7C11.5 7.2 13 6 15 6c3.5 0 5 3 3.5 6.5C19.5 16.5 12 21 12 21z"/>
@@ -139,8 +139,8 @@
           <div class="product-action-row">
             {% if product.in_stock %}
               <button class="button secondary cart-toggle" type="button" data-product-id="{{ product.id }}">{% trans "PRODUCTS_CARD_ADD" %}</button>
-            {% endif %}
-            {% if not product.in_stock %}
+            {% else %}
+              <span class="button out-of-stock-button" aria-disabled="true">{% trans "PRODUCTS_CARD_OUT_OF_STOCK" %}</span>
               <button class="button secondary wishlist-button{% if product.id in wishlist_ids %} is-wishlisted{% endif %}" type="button" data-product-id="{{ product.id }}" aria-label="{% trans "PRODUCTS_CARD_WISHLIST" %}">
                 <svg class="wishlist-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                   <path d="M12 21s-7.5-4.5-9.5-8.5C1 9 2.5 6 6 6c2 0 3.5 1.2 4.5 2.7C11.5 7.2 13 6 15 6c3.5 0 5 3 3.5 6.5C19.5 16.5 12 21 12 21z"/>

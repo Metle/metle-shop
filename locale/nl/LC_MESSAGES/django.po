@@ -133,6 +133,12 @@ msgstr "Meer info..."
 msgid "PRODUCTS_CARD_ADD"
 msgstr "Toevoegen aan winkelwagen"
 
+msgid "PRODUCTS_CARD_WISHLIST"
+msgstr "Verlanglijst"
+
+msgid "PRODUCTS_CARD_OUT_OF_STOCK"
+msgstr "Uitverkocht"
+
 msgid "PRODUCTS_QTY"
 msgstr "Aantal"
 

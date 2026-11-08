@@ -824,6 +824,24 @@
       border: 2px solid var(--leaf);
     }
 
+    .out-of-stock-button {
+      background: #fdecec;
+      color: #b2332a;
+      border: 1px solid #e7b4ad;
+      font-weight: 600;
+      cursor: default;
+    }
+
+    .out-of-stock-button:hover {
+      background: #fdecec;
+    }
+
+    .stock-status-out {
+      color: #b2332a;
+      font-weight: 600;
+      margin: 0 0 4px;
+    }
+
     .hero {
       display: grid;
       gap: 16px;
