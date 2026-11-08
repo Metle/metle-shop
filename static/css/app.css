@@ -696,6 +696,41 @@
       font-weight: 600;
     }
 
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pagination-pages {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pagination-page {
+      padding: 8px 12px;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .pagination-current {
+      padding: 8px 12px;
+      min-width: 40px;
+      text-align: center;
+      background: var(--leaf);
+      color: white;
+    }
+
+    .pagination-ellipsis {
+      padding: 0 4px;
+      color: var(--ink);
+      opacity: 0.6;
+    }
+
     .button {
       display: inline-block;
       padding: 10px 18px;

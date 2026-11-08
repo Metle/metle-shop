@@ -1,5 +1,6 @@
 import json
 from decimal import Decimal, ROUND_HALF_UP
+from urllib.parse import urlencode
 
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -97,6 +98,19 @@ def product_list(request):
     paginator = Paginator(products, 15)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    page_range = paginator.get_elided_page_range(
+        page_obj.number, on_each_side=1, on_ends=1
+    )
+    filter_params = {}
+    if category_slug:
+        filter_params['category'] = category_slug
+    if brand_id:
+        filter_params['brand'] = brand_id
+    if sale_only:
+        filter_params['sale'] = '1'
+    if search_query:
+        filter_params['q'] = search_query
+    filter_qs = urlencode(filter_params)
     customer_id = request.session.get('customer_id')
     session_key = request.session.session_key
     cart_has_items = False
@@ -134,6 +148,8 @@ def product_list(request):
         {
             'products': page_obj,
             'page_obj': page_obj,
+            'page_range': page_range,
+            'filter_qs': filter_qs,
             'categories': categories,
             'active_category': category_slug,
             'active_brand': brand_id,

@@ -166,18 +166,24 @@
   </section>
 
   {% if page_obj.has_other_pages %}
-    <div class="section-title section-spacing-top">
-      <div>
-        {% if page_obj.has_previous %}
-          <a class="button secondary" href="?page={{ page_obj.previous_page_number }}{% if active_category %}&category={{ active_category }}{% endif %}{% if active_brand %}&brand={{ active_brand }}{% endif %}{% if active_sale %}&sale=1{% endif %}">{% trans "PAGINATION_PREV" %}</a>
-        {% endif %}
+    <div class="pagination section-spacing-top">
+      {% if page_obj.has_previous %}
+        <a class="button secondary" href="?page={{ page_obj.previous_page_number }}{% if filter_qs %}&{{ filter_qs }}{% endif %}">{% trans "PAGINATION_PREV" %}</a>
+      {% endif %}
+      <div class="pagination-pages">
+        {% for num in page_range %}
+          {% if num == page_obj.paginator.ELLIPSIS %}
+            <span class="pagination-ellipsis">{{ num }}</span>
+          {% elif num == page_obj.number %}
+            <span class="pill pagination-current" aria-current="page">{{ num }}</span>
+          {% else %}
+            <a class="button secondary pagination-page" href="?page={{ num }}{% if filter_qs %}&{{ filter_qs }}{% endif %}">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
       </div>
-      <span class="pill">{% trans "PAGINATION_PAGE" %} {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
-      <div>
-        {% if page_obj.has_next %}
-          <a class="button secondary" href="?page={{ page_obj.next_page_number }}{% if active_category %}&category={{ active_category }}{% endif %}{% if active_brand %}&brand={{ active_brand }}{% endif %}{% if active_sale %}&sale=1{% endif %}">{% trans "PAGINATION_NEXT" %}</a>
-        {% endif %}
-      </div>
+      {% if page_obj.has_next %}
+        <a class="button secondary" href="?page={{ page_obj.next_page_number }}{% if filter_qs %}&{{ filter_qs }}{% endif %}">{% trans "PAGINATION_NEXT" %}</a>
+      {% endif %}
     </div>
   {% endif %}
 {% endblock %}
