@@ -2,6 +2,7 @@ import json
 from decimal import Decimal, ROUND_HALF_UP
 
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.templatetags.static import static
@@ -77,6 +78,7 @@ def product_list(request):
     category_slug = request.GET.get('category')
     brand_id = request.GET.get('brand')
     sale_only = request.GET.get('sale')
+    search_query = (request.GET.get('q') or '').strip()
     products = Product.objects.select_related('category').all().order_by('name')
     if category_slug:
         products = products.filter(category__slug=category_slug)
@@ -84,6 +86,12 @@ def product_list(request):
         products = products.filter(brand_id=brand_id)
     if sale_only:
         products = products.filter(discount__gt=0)
+    if search_query:
+        products = products.filter(
+            Q(name__icontains=search_query)
+            | Q(category__name__icontains=search_query)
+            | Q(brand__name__icontains=search_query)
+        )
     code, symbol, rate = _get_currency(request)
     products = _apply_currency(products, rate, symbol)
     paginator = Paginator(products, 15)
@@ -130,6 +138,7 @@ def product_list(request):
             'active_category': category_slug,
             'active_brand': brand_id,
             'active_sale': sale_only,
+            'active_query': search_query,
             'currency_code': code,
             'previous_products': previous_products,
             'wishlist_ids': wishlist_ids,

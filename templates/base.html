@@ -26,7 +26,7 @@
         <a class="nav-link" data-short="Ch" href="/checkout/">{% trans "NAV_CHECKOUT" %}</a>
         <div class="search-wrap">
           <label for="product-search">{% trans "NAV_SEARCH" %}</label>
-          <input id="product-search" type="search" placeholder="{% trans "NAV_SEARCH_PLACEHOLDER" %}">
+          <input id="product-search" type="search" placeholder="{% trans "NAV_SEARCH_PLACEHOLDER" %}" value="{{ active_query|default:'' }}">
         </div>
         <div class="nav-separator"></div>
         <div class="account-wrap">
@@ -220,17 +220,36 @@
     updateCartCount();
 
     if (searchInput) {
+      const submitSearch = () => {
+        const query = searchInput.value.trim();
+        const nextUrl = new URL(window.location.href);
+        if (nextUrl.pathname !== '/') {
+          nextUrl.pathname = '/';
+          nextUrl.search = '';
+        }
+        nextUrl.searchParams.delete('page');
+        if (query) {
+          nextUrl.searchParams.set('q', query);
+        } else {
+          nextUrl.searchParams.delete('q');
+        }
+        const target = nextUrl.pathname + nextUrl.search;
+        if (target !== window.location.pathname + window.location.search) {
+          window.location.href = target;
+        }
+      };
+
       let searchTimer;
       searchInput.addEventListener('input', () => {
         clearTimeout(searchTimer);
-        searchTimer = setTimeout(() => {
-          const query = searchInput.value.toLowerCase().trim();
-          const cards = document.querySelectorAll('.product-card');
-          cards.forEach((card) => {
-            const text = card.textContent.toLowerCase();
-            card.style.display = text.includes(query) ? '' : 'none';
-          });
-        }, 1000);
+        searchTimer = setTimeout(submitSearch, 500);
+      });
+      searchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          clearTimeout(searchTimer);
+          submitSearch();
+        }
       });
     }
 
