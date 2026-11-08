@@ -28,22 +28,27 @@ def _get_or_create_cart(request):
 
 
 @require_POST
+def _cart_redirect(request):
+    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER')
+    if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+        return redirect(next_url)
+    return redirect(reverse('cart_detail'))
+
+
 def add_to_cart(request, product_id):
     cart = _get_or_create_cart(request)
     product = get_object_or_404(Product, id=product_id)
+    if product.in_stock <= 0:
+        return _cart_redirect(request)
     quantity = int(request.POST.get('quantity', 1))
     item, created = CartItem.objects.get_or_create(cart=cart, product=product)
     if created:
         item.quantity = max(1, quantity)
     else:
         item.quantity += max(1, quantity)
-    if product.in_stock > 0:
-        item.quantity = min(item.quantity, product.in_stock)
+    item.quantity = min(item.quantity, product.in_stock)
     item.save()
-    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER')
-    if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
-        return redirect(next_url)
-    return redirect(reverse('cart_detail'))
+    return _cart_redirect(request)
 
 
 def cart_detail(request):

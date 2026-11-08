@@ -836,12 +836,6 @@
       background: #fdecec;
     }
 
-    .stock-status-out {
-      color: #b2332a;
-      font-weight: 600;
-      margin: 0 0 4px;
-    }
-
     .hero {
       display: grid;
       gap: 16px;

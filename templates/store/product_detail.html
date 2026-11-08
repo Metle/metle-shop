@@ -54,8 +54,6 @@
       </p>
       {% if product.in_stock %}
         <p class="muted">{% trans "PRODUCT_DETAIL_AVAILABLE" %}</p>
-      {% else %}
-        <p class="stock-status-out">{% trans "PRODUCTS_CARD_OUT_OF_STOCK" %}</p>
       {% endif %}
       <form method="post" action="/cart/add/{{ product.id }}/" class="add-to-cart-form">
         {% csrf_token %}
