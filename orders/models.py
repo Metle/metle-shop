@@ -92,3 +92,12 @@ class PurchaseLog(models.Model):
 
     def __str__(self) -> str:
         return f"Order {self.order_id} - {self.product} ({self.quantity})"
+
+
+class PurchaseLogOrder(Order):
+    """Proxy of Order used to drive an order-centric purchase-log admin view."""
+
+    class Meta:
+        proxy = True
+        verbose_name = 'Purchase log'
+        verbose_name_plural = 'Purchase logs'

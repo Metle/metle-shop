@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.contrib import admin
 
-from .models import Order, OrderItem, PurchaseLog
+from .models import Order, OrderItem, PurchaseLog, PurchaseLogOrder
 
 
 class OrderItemInline(admin.TabularInline):
@@ -30,8 +30,38 @@ class OrderAdmin(admin.ModelAdmin):
         return max(total, Decimal('0.00'))
 
 
-@admin.register(PurchaseLog)
+class PurchaseLogItemInline(admin.TabularInline):
+    model = PurchaseLog
+    extra = 0
+    can_delete = False
+    fields = ('product', 'quantity', 'created_at')
+    readonly_fields = ('product', 'quantity', 'created_at')
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(PurchaseLogOrder)
 class PurchaseLogAdmin(admin.ModelAdmin):
-    list_display = ('order', 'product', 'quantity', 'created_at')
-    search_fields = ('order__id', 'product__name', 'product__sku')
+    list_display = ('order_number', 'email', 'full_name', 'logged_items', 'created_at')
+    search_fields = ('order_number', 'email', 'full_name')
     list_filter = ('created_at',)
+    fields = ('order_number', 'full_name', 'email', 'status', 'created_at')
+    readonly_fields = ('order_number', 'full_name', 'email', 'status', 'created_at')
+    inlines = [PurchaseLogItemInline]
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(purchase_logs__isnull=False).distinct()
+
+    @admin.display(description='Items')
+    def logged_items(self, obj):
+        return obj.purchase_logs.count()
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
