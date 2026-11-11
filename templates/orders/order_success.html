@@ -8,9 +8,13 @@
 {% block content %}
   <section class="card order-success-card">
     <h2>{% trans "ORDER_SUCCESS_TITLE" %}</h2>
-    <p class="muted">{% trans "ORDER_SUCCESS_MESSAGE" %} {{ order.id }}.</p>
-    <p>{% trans "ORDER_SUCCESS_STATUS" %}: {{ order.status }}</p>
-    <a class="button secondary" href="/checkout/order/{{ order.id }}/">{% trans "ORDER_SUCCESS_VIEW" %}</a>
+    <p class="muted">{% trans "ORDER_SUCCESS_REDIRECT" %}</p>
+    <a class="button secondary" href="{% url 'order_detail' order.id %}">{% trans "ORDER_SUCCESS_VIEW" %}</a>
     <a class="button" href="/">{% trans "ORDER_SUCCESS_RETURN" %}</a>
   </section>
+  <script>
+    setTimeout(function () {
+      window.location.href = "{% url 'order_detail' order.id %}";
+    }, 2500);
+  </script>
 {% endblock %}

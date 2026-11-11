@@ -8,9 +8,9 @@ from store.models import Product
 class Order(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
-        ('paid', 'Paid'),
-        ('shipped', 'Shipped'),
-        ('cancelled', 'Cancelled'),
+        ('in progress', 'In progress'),
+        ('ready for pickup', 'Ready for pickup'),
+        ('delivery scheduled', 'Delivery scheduled'),
     ]
 
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
@@ -71,7 +71,7 @@ class Order(models.Model):
         else:
             super().save(*args, **kwargs)
 
-        if self.status == 'paid' and previous_status != 'paid':
+        if self.status == 'in progress' and previous_status != 'in progress':
             self._record_purchase_log()
 
 class OrderItem(models.Model):

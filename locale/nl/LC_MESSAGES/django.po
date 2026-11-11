@@ -236,7 +236,10 @@ msgid "CHECKOUT_ITEMS_TITLE"
 msgstr "Je items"
 
 msgid "ORDER_SUCCESS_TITLE"
-msgstr "Bestelling bevestigd"
+msgstr "Bedankt voor je aankoop"
+
+msgid "ORDER_SUCCESS_REDIRECT"
+msgstr "Je wordt doorgestuurd naar je besteldetails…"
 
 msgid "ORDER_SUCCESS_MESSAGE"
 msgstr "Bedankt dat je voor Utsukushi kiest. Je bestelnummer is"

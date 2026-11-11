@@ -46,11 +46,20 @@ def checkout(request):
                     customer.full_name = form.cleaned_data['full_name']
                     customer.save(update_fields=['full_name'])
 
+                delivery_option = form.cleaned_data['delivery_option']
+                delivery_address = (
+                    form.cleaned_data['delivery_address'].strip()
+                    if delivery_option == 'delivery'
+                    else ''
+                )
+
                 order = Order.objects.create(
                     customer=customer,
                     email=customer.email,
                     full_name=customer.full_name,
-                    status='pending',
+                    status='in progress',
+                    delivery_option=delivery_option,
+                    delivery_address=delivery_address,
                 )
 
                 for item in items:

@@ -10,11 +10,45 @@
     <div class="card">
       <h2>{% trans "CHECKOUT_TITLE" %}</h2>
       <p class="muted">{% trans "CHECKOUT_SUBTITLE" %}</p>
-      <form method="post">
+      <form method="post" id="checkout-form">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.non_field_errors }}
+        <p>
+          {{ form.full_name.label_tag }}
+          {{ form.full_name }}
+          {{ form.full_name.errors }}
+        </p>
+        <p>
+          {{ form.email.label_tag }}
+          {{ form.email }}
+          {{ form.email.errors }}
+        </p>
+        <p>
+          <label for="id_delivery_option">{% trans "ORDER_DELIVERY_OPTION" %}</label>
+          <select name="delivery_option" id="id_delivery_option">
+            <option value="pick-up" {% if form.delivery_option.value == "pick-up" %}selected{% endif %}>{% trans "ORDER_DELIVERY_PICKUP" %}</option>
+            <option value="delivery" {% if form.delivery_option.value == "delivery" %}selected{% endif %}>{% trans "ORDER_DELIVERY_DELIVERY" %}</option>
+          </select>
+          {{ form.delivery_option.errors }}
+        </p>
+        <p id="checkout-address-wrap" class="delivery-address-wrap">
+          <label for="id_delivery_address">{% trans "ORDER_ADDRESS" %}</label>
+          <textarea name="delivery_address" id="id_delivery_address" placeholder="{% trans "ORDER_ADDRESS_PLACEHOLDER" %}">{{ form.delivery_address.value|default:"" }}</textarea>
+          {{ form.delivery_address.errors }}
+        </p>
         <button class="button" type="submit">{% trans "CHECKOUT_CTA" %}</button>
       </form>
+      <script>
+        const checkoutDelivery = document.querySelector('#id_delivery_option');
+        const checkoutAddressWrap = document.querySelector('#checkout-address-wrap');
+        if (checkoutDelivery && checkoutAddressWrap) {
+          const toggleAddress = () => {
+            checkoutAddressWrap.style.display = checkoutDelivery.value === 'delivery' ? 'block' : 'none';
+          };
+          toggleAddress();
+          checkoutDelivery.addEventListener('change', toggleAddress);
+        }
+      </script>
       {% if stock_issues %}
         <p class="muted">{% trans "CHECKOUT_STOCK_ISSUE" %}: {{ stock_issues|join:", " }}</p>
       {% endif %}

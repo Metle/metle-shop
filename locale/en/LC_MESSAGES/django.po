@@ -239,7 +239,10 @@ msgid "CHECKOUT_ITEMS_TITLE"
 msgstr "Your items"
 
 msgid "ORDER_SUCCESS_TITLE"
-msgstr "Order confirmed"
+msgstr "Thank you for your purchase"
+
+msgid "ORDER_SUCCESS_REDIRECT"
+msgstr "Taking you to your order details…"
 
 msgid "ORDER_SUCCESS_MESSAGE"
 msgstr "Thank you for choosing Utsukushi. Your order number is"
