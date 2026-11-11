@@ -57,7 +57,7 @@ def checkout(request):
                     customer=customer,
                     email=customer.email,
                     full_name=customer.full_name,
-                    status='in progress',
+                    status='pending',
                     delivery_option=delivery_option,
                     delivery_address=delivery_address,
                 )
@@ -69,6 +69,11 @@ def checkout(request):
                         quantity=item.quantity,
                         unit_price=item.product.price,
                     )
+
+                # Flip to 'in progress' now that the items exist so the
+                # status transition records the purchase log.
+                order.status = 'in progress'
+                order.save(update_fields=['status'])
 
                 cart.items.all().delete()
 
