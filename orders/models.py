@@ -11,6 +11,8 @@ class Order(models.Model):
         ('in progress', 'In progress'),
         ('ready for pickup', 'Ready for pickup'),
         ('delivery scheduled', 'Delivery scheduled'),
+        ('completed', 'Completed'),
+        ('canceled', 'Canceled'),
     ]
 
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
@@ -21,6 +23,12 @@ class Order(models.Model):
     delivery_option = models.CharField(max_length=20, blank=True)
     delivery_address = models.TextField(blank=True)
     payment_option = models.CharField(max_length=20, blank=True)
+    window_start = models.DateTimeField(
+        null=True, blank=True, help_text='Start of the pickup or delivery time window.'
+    )
+    window_end = models.DateTimeField(
+        null=True, blank=True, help_text='End of the pickup or delivery time window.'
+    )
     discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 

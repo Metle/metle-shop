@@ -56,7 +56,7 @@ class Product(models.Model):
         if not self.pk:
             return 0
         PurchaseLog = apps.get_model('orders', 'PurchaseLog')
-        logs = PurchaseLog.objects.filter(product_id=self.pk)
+        logs = PurchaseLog.objects.filter(product_id=self.pk).exclude(order__status='canceled')
         if self.subtract_from:
             logs = logs.filter(created_at__gte=self.subtract_from)
         total = logs.aggregate(total=Sum('quantity')).get('total') or 0

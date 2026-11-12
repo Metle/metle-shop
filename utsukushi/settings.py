@@ -152,3 +152,22 @@ if SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY:
     STORAGES['default'] = {'BACKEND': 'utsukushi.storages.SupabaseStorage'}
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email (Gmail SMTP). EMAIL_HOST_PASSWORD must be a Gmail App Password
+# (requires 2-Step Verification), never the account's normal password.
+EMAIL_BACKEND = config(
+    'EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend'
+)
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = config(
+    'DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER or 'webmaster@localhost'
+)
+
+# Where new-order notifications are sent (the shop owner's inbox).
+ORDER_NOTIFICATION_EMAIL = config(
+    'ORDER_NOTIFICATION_EMAIL', default='utsukushisu202@gmail.com'
+)

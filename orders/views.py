@@ -8,6 +8,7 @@ from accounts.models import Customer
 from cart.models import Cart, CartItem
 from store.models import CurrencyRate, Product
 
+from .emails import send_order_notification
 from .forms import CheckoutForm
 from .models import Order, OrderItem
 
@@ -77,6 +78,7 @@ def checkout(request):
 
                 cart.items.all().delete()
 
+            send_order_notification(order)
             request.session['customer_id'] = customer.id
             return redirect(reverse('order_success', kwargs={'order_id': order.id}))
     else:
