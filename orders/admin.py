@@ -83,19 +83,23 @@ class DateTimeLocalInput(forms.DateTimeInput):
 
 
 class PurchaseLogOrderForm(forms.ModelForm):
+    # Declared explicitly so the admin doesn't replace them with its
+    # SplitDateTimeField (which expects a list, not the single value the
+    # datetime-local input posts).
+    window_start = forms.DateTimeField(
+        required=False,
+        widget=DateTimeLocalInput(),
+        input_formats=['%Y-%m-%dT%H:%M', '%Y-%m-%dT%H:%M:%S'],
+    )
+    window_end = forms.DateTimeField(
+        required=False,
+        widget=DateTimeLocalInput(),
+        input_formats=['%Y-%m-%dT%H:%M', '%Y-%m-%dT%H:%M:%S'],
+    )
+
     class Meta:
         model = PurchaseLogOrder
         fields = ('status', 'window_start', 'window_end')
-        widgets = {
-            'window_start': DateTimeLocalInput(),
-            'window_end': DateTimeLocalInput(),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Accept the value the datetime-local input posts back.
-        for name in ('window_start', 'window_end'):
-            self.fields[name].input_formats = ['%Y-%m-%dT%H:%M', '%Y-%m-%dT%H:%M:%S']
 
     def clean(self):
         cleaned_data = super().clean()
