@@ -7,10 +7,36 @@ from django.shortcuts import redirect
 from django.urls import path, reverse
 from django.utils.html import format_html
 
-from .models import Order, OrderItem, PurchaseLog, PurchaseLogOrder
+from .models import EmailTemplate, Order, OrderItem, PurchaseLog, PurchaseLogOrder
 
 # Statuses that lock the order from further edits.
 LOCKED_STATUSES = ('completed', 'canceled')
+
+
+class WysiwygWidget(forms.Textarea):
+    class Media:
+        js = (
+            'https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js',
+            'orders/js/email_template_editor.js',
+        )
+
+    def __init__(self, attrs=None):
+        attrs = {**(attrs or {}), 'class': 'wysiwyg-editor'}
+        super().__init__(attrs)
+
+
+class EmailTemplateForm(forms.ModelForm):
+    class Meta:
+        model = EmailTemplate
+        fields = ('key', 'subject', 'body')
+        widgets = {'body': WysiwygWidget()}
+
+
+@admin.register(EmailTemplate)
+class EmailTemplateAdmin(admin.ModelAdmin):
+    form = EmailTemplateForm
+    list_display = ('__str__', 'key', 'subject', 'updated_at')
+    readonly_fields = ('updated_at',)
 
 
 class OrderItemInline(admin.TabularInline):

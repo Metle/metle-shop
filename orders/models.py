@@ -82,6 +82,11 @@ class Order(models.Model):
         if self.status == 'in progress' and previous_status != 'in progress':
             self._record_purchase_log()
 
+        if self.status in ('ready for pickup', 'delivery scheduled') and previous_status != self.status:
+            from .emails import send_status_update
+            transaction.on_commit(lambda: send_status_update(self))
+
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
@@ -109,3 +114,27 @@ class PurchaseLogOrder(Order):
         proxy = True
         verbose_name = 'Purchase log'
         verbose_name_plural = 'Purchase logs'
+
+
+class EmailTemplate(models.Model):
+    KEY_CHOICES = [
+        ('new_order', 'New order (to shop owner)'),
+        ('ready for pickup', 'Status: ready for pickup (to customer)'),
+        ('delivery scheduled', 'Status: delivery scheduled (to customer)'),
+    ]
+
+    key = models.CharField(max_length=50, unique=True, choices=KEY_CHOICES)
+    subject = models.CharField(max_length=255)
+    body = models.TextField(
+        help_text=(
+            'HTML email body. Django template placeholders are available: '
+            '{{ order.order_number }}, {{ order.full_name }}, {{ order.email }}, '
+            '{{ order.delivery_option }}, {{ order.delivery_address }}, '
+            '{{ order.window_start }}, {{ order.window_end }}, {{ total }}, and '
+            '{% for item in items %}{{ item.product.name }} x {{ item.quantity }}{% endfor %}.'
+        )
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return self.get_key_display()

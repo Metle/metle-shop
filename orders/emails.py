@@ -2,7 +2,11 @@ import logging
 from decimal import Decimal
 
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template import Context, Template
+from django.utils.html import strip_tags
+
+from .email_defaults import DEFAULT_TEMPLATES
 
 logger = logging.getLogger(__name__)
 
@@ -18,42 +22,51 @@ def _order_total(order):
     return max(total, Decimal('0.00')).quantize(Decimal('0.01'))
 
 
-def send_order_notification(order):
-    """Notify the shop owner that a new order was placed.
+def _render(key, context_dict):
+    from .models import EmailTemplate
 
-    Failures are logged but never interrupt the checkout flow.
-    """
-    recipient = getattr(settings, 'ORDER_NOTIFICATION_EMAIL', '')
+    defaults = DEFAULT_TEMPLATES.get(key, {'subject': '', 'body': ''})
+    template = EmailTemplate.objects.filter(key=key).first()
+    subject_src = template.subject if template else defaults['subject']
+    body_src = template.body if template else defaults['body']
+    subject = Template(subject_src).render(Context(context_dict)).strip()
+    html_body = Template(body_src).render(Context(context_dict))
+    return subject, html_body
+
+
+def _send(key, context_dict, recipient):
     if not recipient:
         return
-
-    items = order.items.select_related('product')
-    lines = [
-        f"- {item.product.name} x {item.quantity} @ {item.unit_price}"
-        for item in items
-    ]
-    delivery = order.delivery_option or '-'
-    if order.delivery_option == 'delivery' and order.delivery_address:
-        delivery = f"delivery to {order.delivery_address}"
-
-    body = "\n".join([
-        f"New order {order.order_number}",
-        f"Customer: {order.full_name} <{order.email}>",
-        f"Fulfilment: {delivery}",
-        "",
-        "Items:",
-        *lines,
-        "",
-        f"Total: {_order_total(order)}",
-    ])
-
     try:
-        send_mail(
-            subject=f"New order {order.order_number}",
-            message=body,
+        subject, html_body = _render(key, context_dict)
+        message = EmailMultiAlternatives(
+            subject=subject,
+            body=strip_tags(html_body),
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[recipient],
-            fail_silently=False,
+            to=[recipient],
         )
+        message.attach_alternative(html_body, 'text/html')
+        message.send()
     except Exception:
-        logger.exception("Failed to send order notification for order %s", order.pk)
+        logger.exception("Failed to send '%s' email to %s", key, recipient)
+
+
+def _order_context(order):
+    return {
+        'order': order,
+        'items': list(order.items.select_related('product')),
+        'total': _order_total(order),
+    }
+
+
+def send_order_notification(order):
+    """Notify the shop owner that a new order was placed."""
+    recipient = getattr(settings, 'ORDER_NOTIFICATION_EMAIL', '')
+    _send('new_order', _order_context(order), recipient)
+
+
+def send_status_update(order):
+    """Email the customer when the order reaches a fulfilment status."""
+    if order.status not in ('ready for pickup', 'delivery scheduled'):
+        return
+    _send(order.status, _order_context(order), order.email)
