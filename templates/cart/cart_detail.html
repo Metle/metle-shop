@@ -3,7 +3,7 @@
 
 {% block title %}Your Cart - Utsukushi{% endblock %}
 
-{% block body_class %}checkout-bg{% endblock %}
+{% block body_class %}checkout-bg cart-page{% endblock %}
 
 {% block content %}
   <div class="section-title">
@@ -13,28 +13,37 @@
 
   <section class="grid">
     {% for item in items %}
-      <article class="card">
-        <div class="cart-item-header">
-          <h3 class="cart-item-title">{{ item.product.name }}</h3>
-          <form method="post" action="/cart/remove/{{ item.id }}/" class="cart-remove-form">
-            {% csrf_token %}
-            <input type="hidden" name="next" value="{{ request.get_full_path }}">
-            <button type="submit" class="cart-remove" aria-label="{% trans "CART_REMOVE_ITEM" %}">×</button>
-          </form>
+      <article class="card cart-item-card">
+        <div class="cart-item-thumb">
+          {% if item.product.image_src %}
+            <img src="{{ item.product.image_src }}" alt="{{ item.product.name }}">
+          {% else %}
+            <span class="product-placeholder">Utsukushi</span>
+          {% endif %}
         </div>
-        <p class="muted">{% trans "CART_QTY" %}: {{ item.quantity }}</p>
-        <p class="muted">{% trans "CART_UNIT_PRICE" %}: {{ currency_symbol }}{{ item.display_unit_price|floatformat:2 }}</p>
-        {% if item.product.discount %}
-          <p class="muted">{% trans "CART_UNIT_DISCOUNT" %}: -{{ item.product.discount }}%</p>
-          <p class="cart-line-total">
-            <span class="price-original">{{ currency_symbol }}{{ item.display_line_total|floatformat:2 }}</span>
-            <span class="price-discount">{{ currency_symbol }}{{ item.display_line_discounted|floatformat:2 }}</span>
-          </p>
-        {% else %}
-          <p class="cart-line-total">
-            <strong>{{ currency_symbol }}{{ item.display_line_total|floatformat:2 }}</strong>
-          </p>
-        {% endif %}
+        <div class="cart-item-body">
+          <div class="cart-item-header">
+            <h3 class="cart-item-title">{{ item.product.name }}</h3>
+            <form method="post" action="/cart/remove/{{ item.id }}/" class="cart-remove-form">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit" class="cart-remove" aria-label="{% trans "CART_REMOVE_ITEM" %}">×</button>
+            </form>
+          </div>
+          <p class="muted">{% trans "CART_QTY" %}: {{ item.quantity }}</p>
+          <p class="muted">{% trans "CART_UNIT_PRICE" %}: {{ currency_symbol }}{{ item.display_unit_price|floatformat:2 }}</p>
+          {% if item.product.discount %}
+            <p class="muted">{% trans "CART_UNIT_DISCOUNT" %}: -{{ item.product.discount }}%</p>
+            <p class="cart-line-total">
+              <span class="price-original">{{ currency_symbol }}{{ item.display_line_total|floatformat:2 }}</span>
+              <span class="price-discount">{{ currency_symbol }}{{ item.display_line_discounted|floatformat:2 }}</span>
+            </p>
+          {% else %}
+            <p class="cart-line-total">
+              <strong>{{ currency_symbol }}{{ item.display_line_total|floatformat:2 }}</strong>
+            </p>
+          {% endif %}
+        </div>
       </article>
     {% empty %}
       <article class="card">{% trans "CART_EMPTY" %}</article>
@@ -52,15 +61,29 @@
 
   <section class="card section-spacing-top">
     <h3>{% trans "CART_PREVIOUS_ORDERS" %}</h3>
-    <ul>
-      {% for order in orders %}
-        <li>
-          <a href="/checkout/order/{{ order.id }}/">{% trans "CART_ORDER" %} #{{ order.order_number|default:order.id }}</a>
-          - {{ order.created_at|date:"M d, Y" }} - {{ order.status }} - {{ currency_symbol }}{{ order.display_total|floatformat:2 }}
-        </li>
-      {% empty %}
-        <li class="muted">{% trans "CART_NO_PREVIOUS" %}</li>
-      {% endfor %}
-    </ul>
+    {% if orders %}
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>{% trans "CART_ORDER" %}</th>
+            <th>{% trans "ORDER_PLACED" %}</th>
+            <th>{% trans "ORDER_STATUS" %}</th>
+            <th>{% trans "ORDER_TOTAL" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+            <tr>
+              <td><a href="/checkout/order/{{ order.id }}/">#{{ order.order_number|default:order.id }}</a></td>
+              <td>{{ order.created_at|date:"M d, Y" }}</td>
+              <td>{{ order.status }}</td>
+              <td class="orders-table-total">{{ currency_symbol }}{{ order.display_total|floatformat:2 }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="muted">{% trans "CART_NO_PREVIOUS" %}</p>
+    {% endif %}
   </section>
 {% endblock %}
