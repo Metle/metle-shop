@@ -6,7 +6,7 @@
 {% block body_class %}checkout-bg{% endblock %}
 
 {% block content %}
-  <section class="hero">
+  <section class="hero checkout-hero">
     <div class="card">
       <h2>{% trans "CHECKOUT_TITLE" %}</h2>
       <p class="muted">{% trans "CHECKOUT_SUBTITLE" %}</p>
@@ -36,6 +36,14 @@
           <textarea name="delivery_address" id="id_delivery_address" placeholder="{% trans "ORDER_ADDRESS_PLACEHOLDER" %}">{{ form.delivery_address.value|default:"" }}</textarea>
           {{ form.delivery_address.errors }}
         </p>
+        <p>
+          <label for="id_payment_option">{% trans "ORDER_PAYMENT_OPTION" %}</label>
+          <select name="payment_option" id="id_payment_option">
+            <option value="cash" {% if form.payment_option.value == "cash" %}selected{% endif %}>{% trans "ORDER_PAYMENT_CASH" %}</option>
+            <option value="bank transfer" {% if form.payment_option.value == "bank transfer" %}selected{% endif %}>{% trans "ORDER_PAYMENT_BANK" %}</option>
+          </select>
+          {{ form.payment_option.errors }}
+        </p>
         <button class="button" type="submit">{% trans "CHECKOUT_CTA" %}</button>
       </form>
       <script>
@@ -56,7 +64,21 @@
     <div class="card">
       <h3>{% trans "CHECKOUT_ITEMS_TITLE" %}</h3>
       {% for item in items %}
-        <p>{{ item.product.name }} x {{ item.quantity }}</p>
+        <div class="checkout-item">
+          <div class="checkout-item-thumb">
+            {% if item.product.image_src %}
+              <img src="{{ item.product.image_src }}" alt="{{ item.product.name }}">
+            {% else %}
+              <span class="product-placeholder">Utsukushi</span>
+            {% endif %}
+          </div>
+          <span class="checkout-item-name">{{ item.product.name }} x {{ item.quantity }}</span>
+          <form method="post" action="/cart/remove/{{ item.id }}/" class="cart-remove-form">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="cart-remove" aria-label="{% trans "CART_REMOVE_ITEM" %}">×</button>
+          </form>
+        </div>
       {% endfor %}
     </div>
   </section>

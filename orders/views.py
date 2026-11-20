@@ -61,6 +61,7 @@ def checkout(request):
                     status='pending',
                     delivery_option=delivery_option,
                     delivery_address=delivery_address,
+                    payment_option=form.cleaned_data['payment_option'],
                 )
 
                 for item in items:
