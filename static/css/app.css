@@ -888,6 +888,8 @@
 
     .checkout-item-name {
       flex: 1;
+      font-size: 0.95rem;
+      line-height: 1.4;
     }
 
     .checkout-item .cart-remove-form {
@@ -903,6 +905,7 @@
     .hero h3 {
       font-family: "Playfair Display", serif;
       font-size: 2rem;
+      margin: 0 0 16px;
     }
 
     .muted {
