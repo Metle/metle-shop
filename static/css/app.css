@@ -900,6 +900,10 @@
       margin: 0 0 8px;
     }
 
+    .hero h3 {
+      font-family: "Playfair Display", serif;
+    }
+
     .muted {
       color: var(--muted);
     }
