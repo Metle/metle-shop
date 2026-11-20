@@ -3,7 +3,7 @@
 
 {% block title %}{% trans "ORDER_TITLE" %} #{{ order.order_number|default:order.id }} - Utsukushi{% endblock %}
 
-{% block body_class %}order-bg{% endblock %}
+{% block body_class %}order-bg order-page{% endblock %}
 
 {% block content %}
   <section class="card">
@@ -36,11 +36,21 @@
 
   <section class="card section-spacing-top">
     <h3>{% trans "ORDER_ITEMS" %}</h3>
-    <ul>
+    <div class="order-items">
       {% for item in items %}
-        <li>{{ item.product.name }} x {{ item.quantity }} — {{ currency_symbol }}{{ item.line_total|floatformat:2 }}</li>
+        <div class="order-item">
+          <a class="order-item-thumb" href="/products/{{ item.product.id }}/?back={{ request.get_full_path|urlencode }}">
+            {% if item.product.image_src %}
+              <img src="{{ item.product.image_src }}" alt="{{ item.product.name }}">
+            {% else %}
+              <span class="product-placeholder">Utsukushi</span>
+            {% endif %}
+          </a>
+          <span class="order-item-name">{{ item.product.name }} x {{ item.quantity }}</span>
+          <span class="order-item-price">{{ currency_symbol }}{{ item.line_total|floatformat:2 }}</span>
+        </div>
       {% endfor %}
-    </ul>
+    </div>
     {% if order.discount %}
       <p class="muted">{% trans "ORDER_DISCOUNT" %}: {{ order.discount }}%</p>
     {% endif %}

@@ -65,13 +65,13 @@
       <h3>{% trans "CHECKOUT_ITEMS_TITLE" %}</h3>
       {% for item in items %}
         <div class="checkout-item">
-          <div class="checkout-item-thumb">
+          <a class="checkout-item-thumb" href="/products/{{ item.product.id }}/?back={{ request.get_full_path|urlencode }}">
             {% if item.product.image_src %}
               <img src="{{ item.product.image_src }}" alt="{{ item.product.name }}">
             {% else %}
               <span class="product-placeholder">Utsukushi</span>
             {% endif %}
-          </div>
+          </a>
           <span class="checkout-item-name">{{ item.product.name }} x {{ item.quantity }}</span>
           <form method="post" action="/cart/remove/{{ item.id }}/" class="cart-remove-form">
             {% csrf_token %}

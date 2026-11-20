@@ -14,13 +14,13 @@
   <section class="grid">
     {% for item in items %}
       <article class="card cart-item-card">
-        <div class="cart-item-thumb">
+        <a class="cart-item-thumb" href="/products/{{ item.product.id }}/?back={{ request.get_full_path|urlencode }}">
           {% if item.product.image_src %}
             <img src="{{ item.product.image_src }}" alt="{{ item.product.name }}">
           {% else %}
             <span class="product-placeholder">Utsukushi</span>
           {% endif %}
-        </div>
+        </a>
         <div class="cart-item-body">
           <div class="cart-item-header">
             <h3 class="cart-item-title">{{ item.product.name }}</h3>
